@@ -405,15 +405,35 @@ footer .fname{ font-family:var(--font-display); font-size:20px; color:var(--brow
 </div>
 
 <script>
+/* ================================================================================
+   ██████████████████████████  EDIT ZONE  ██████████████████████████████████████
+   Everything you will ever normally need to change is in this one block.
+   Just edit the text/numbers between the quotes " " or after the colon :
+   Nothing else in the file needs to be touched.
+   ================================================================================ */
 
+/* ---- 1) YOUR PRODUCTS -----------------------------------------------------
+   Copy one whole { ... } block to add a new product. Delete one to remove it.
+
+   - name       : product name shown on the site
+   - price      : number only, in EGP (no letters, no "EGP")
+   - image      : paste a picture link here. Leave "" to show a placeholder box
+   - colors     : list of available colors, in quotes, separated by commas.
+                  Known colors (auto-colored dot): Brown, White, Gold, Cream,
+                  Beige, Black, Tan, Ivory, Red, Blue, Green, Pink, Yellow, Grey
+                  Want a "comes in many colors" option? Just add "Multicolor"
+                  to the list and a rainbow-swirl dot appears automatically.
+   - available  : true = in stock (customers can buy it)
+                  false = sold out (button disabled, shows "Sold Out")
+------------------------------------------------------------------------------ */
 const products = [
 
   // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  PRODUCT 1  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
   {
-    name: "Beaded Bracelet",                              // ← Product 1's name (shown on the site)
-    price: 0,                                              // ← Product 1's price
-    image: "",                                             // ← Product 1's picture link
-    colors: ["Brown", "White", "Gold", "Multicolor"],       // ← Product 1's available colors
+    name: "Beaded Bracelet Set",                              // ← Product 1's name (shown on the site)
+    price: 60,                                              // ← Product 1's price
+    image: "blob:https://web.whatsapp.com/1969cf15-0a11-47d9-8d08-876d8bf4678e",                                             // ← Product 1's picture link
+    colors: ["Blue", "White", "Gold", "Baby blue"],       // ← Product 1's available colors
     available: true                                        // ← true = in stock, false = sold out
   },
   // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  END PRODUCT 1  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -458,10 +478,10 @@ const products = [
    Full number with country code, no "+", no spaces.
    Example for Egypt: "201234567890"
 ------------------------------------------------------------------------------ */
-const WHATSAPP_NUMBER = "201234567890";
+const WHATSAPP_NUMBER = "201270587767";
 
 /* ---- 3) YOUR INSTAPAY DETAILS ------------------------------------------- */
-const INSTAPAY_HANDLE = "your-instapay-username";
+const INSTAPAY_HANDLE = "carolesarwat@instapay";
 
 /* ================================================================================
    ██████████████████████  END OF EDIT ZONE  ███████████████████████████████████
