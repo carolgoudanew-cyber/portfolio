@@ -167,6 +167,7 @@ header{
 }
 .img-track img{
   width:100%; height:100%; object-fit:cover; flex-shrink:0;
+  cursor: zoom-in;
 }
 .img-nav{
   position:absolute; top:50%; transform:translateY(-50%);
@@ -370,6 +371,58 @@ footer{
 }
 footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brown-dark); display:block; margin-bottom:6px;}
 
+/* ---------- Zoom Lightbox ---------- */
+.lightbox-overlay{
+  position:fixed; inset:0; background:rgba(20,12,9,.94);
+  z-index:100; display:none; align-items:center; justify-content:center;
+  flex-direction:column;
+}
+.lightbox-overlay.active{ display:flex; }
+.lightbox-img-wrap{
+  width:100%; height:100%;
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden; touch-action:none;
+}
+.lightbox-img-wrap img{
+  max-width:92vw; max-height:82vh; object-fit:contain;
+  cursor:zoom-in;
+  transition:transform .15s ease;
+  user-select:none; -webkit-user-drag:none;
+}
+.lightbox-img-wrap img.zoomed{
+  cursor:grab; transition:none;
+}
+.lightbox-img-wrap img.dragging{
+  cursor:grabbing;
+}
+.lightbox-close{
+  position:absolute; top:16px; right:16px;
+  width:38px; height:38px; border-radius:50%;
+  background:rgba(255,255,255,.15); color:#fff; border:none;
+  font-size:20px; cursor:pointer; z-index:102;
+  display:flex; align-items:center; justify-content:center;
+}
+.lightbox-nav{
+  position:absolute; top:50%; transform:translateY(-50%);
+  background:rgba(255,255,255,.15); color:#fff; border:none;
+  width:44px; height:44px; border-radius:50%;
+  font-size:24px; cursor:pointer; z-index:102;
+  display:flex; align-items:center; justify-content:center;
+}
+.lightbox-nav.lightbox-prev{ left:14px; }
+.lightbox-nav.lightbox-next{ right:14px; }
+.lightbox-hint{
+  position:absolute; bottom:20px; left:0; right:0;
+  text-align:center; color:rgba(255,255,255,.6); font-size:11.5px;
+  letter-spacing:.3px; z-index:101;
+}
+.lightbox-dots{
+  position:absolute; bottom:44px; left:0; right:0;
+  display:flex; justify-content:center; gap:6px; z-index:101;
+}
+.lightbox-dots .img-dot{ width:6px; height:6px; background:rgba(255,255,255,.4); }
+.lightbox-dots .img-dot.active{ background:#fff; width:16px; }
+
 @media (min-width:641px){
   .nav-wrap{ padding:18px 28px; }
   .logo{ font-size:32px; }
@@ -531,6 +584,18 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
   </div>
 </div>
 
+<!-- Zoom Lightbox -->
+<div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox(event)">✕</button>
+  <button class="lightbox-nav lightbox-prev" id="lightboxPrevBtn" onclick="lightboxStep(-1, event)">‹</button>
+  <button class="lightbox-nav lightbox-next" id="lightboxNextBtn" onclick="lightboxStep(1, event)">›</button>
+  <div class="lightbox-img-wrap" id="lightboxImgWrap">
+    <img id="lightboxImg" src="" alt="" onclick="event.stopPropagation()">
+  </div>
+  <div class="lightbox-dots" id="lightboxDots"></div>
+  <div class="lightbox-hint">Tap image to zoom · drag to pan · pinch to zoom on mobile</div>
+</div>
+
 <script>
 /* ================================================================================
    EDIT ZONE — products, WhatsApp number, InstaPay handle, shipping rules
@@ -549,17 +614,17 @@ const products = [
   { name: "One Summmer Necklace", price: 80, images: ["https://i.pinimg.com/736x/ab/2f/6b/ab2f6b5896c486d8a4f3a40f10108728.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
   { name: "Vintage Necklace", price: 80, images: ["https://wiaps.com/cdn/shop/files/vintage-18k-gold-plated-big-red-onyx-round-bead-choker-necklace-Red-3.jpg?v=1723912466"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
   { name: "Beach Necklace", price: 50, images: ["https://i.pinimg.com/736x/42/9b/da/429bdaaadfeb0a14cc0ba35988aeaabb.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
-  { name: "Tanning Necklace", price: 110, images: ["https://i.pinimg.com/1200x/f1/90/88/f19088cea2c05cd75c3526afb1a4a351.jpg"], colors: ["White","Blue"], available: true },
+  { name: "Tanning Necklace", price: 120, images: ["https://i.pinimg.com/1200x/f1/90/88/f19088cea2c05cd75c3526afb1a4a351.jpg"], colors: ["White","Blue"], available: true },
   { name: "The Star Necklace", price: 100, images: ["https://i.pinimg.com/1200x/96/f5/b4/96f5b47fcd596c729be96b4656cfb1cd.jpg"], colors: ["White","Blue"], available: true },
   { name: "Key Chain with name", price: 60, images: ["https://i.pinimg.com/1200x/9e/9f/e7/9e9fe7177cb7e3662d8082579eb03d16.jpg"], colors: ["Multicolor"], available: true },
   { name: "Aqua Beaded Neckalce", price: 90, images: ["https://i.pinimg.com/1200x/d6/82/d9/d682d9daf1e35c44653bb9752af5e70b.jpg"], colors: ["Blue"], available: true },
   { name: "A set of two Necklaces", price: 120, images: ["https://i.pinimg.com/1200x/26/86/71/268671794770c4e134e76235e5de060c.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
   { name: "One multicolored Necklace", price: 100, images: ["https://i.pinimg.com/736x/37/55/5c/37555cb53aa623b97dcf82a99e2c210c.jpg"], colors: ["Gold","Silver"], available: true },
   { name: "Pearls Chain", price: 60, images: ["https://i.pinimg.com/1200x/b6/5d/cb/b65dcbd2427f1616c741000aa824cadf.jpg"], colors: ["Gold","Silver"], available: true },
-  { name: "The Classy Necklace", price: 80, images: ["https://i.pinimg.com/1200x/0c/19/14/0c19147dab7cf2d3ae87cdcd60f3252c.jpg"], colors: ["Gold","Silver"], available: true },
+  { name: "The Classy Necklace", price: 100, images: ["https://i.pinimg.com/1200x/0c/19/14/0c19147dab7cf2d3ae87cdcd60f3252c.jpg"], colors: ["Gold","Silver"], available: true },
   { name: "The Starry Necklace", price: 150, images: ["https://i.pinimg.com/736x/f6/50/73/f65073f8acb25b867d2b343d5c16eae6.jpg"], colors: ["Gold","Silver"], available: true },
   { name: "The Fish Earrings", price: 80, images: ["https://i.pinimg.com/1200x/be/b8/f0/beb8f01098049adcdb619cc82ace3cda.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
-  { name: "The Eyed Stainless Bracelet", price: 80, images: ["https://i.pinimg.com/1200x/4c/88/4a/4c884a9cd120a65dbf1e2af435127ba0.jpg"], colors: ["Multicolored"], available: true },
+  { name: "The Eyed Stainless Bracelet", price: 90, images: ["https://i.pinimg.com/1200x/4c/88/4a/4c884a9cd120a65dbf1e2af435127ba0.jpg"], colors: ["Multicolored"], available: true },
   { name: "A set of two necklace", price: 80, images: ["https://i.pinimg.com/736x/7e/88/82/7e88823affd6e0656acf44833fdd2554.jpg"], colors: ["White","Blue"], available: true },
   { name: "The Hot summer girl Necklace", price: 120, images: ["https://i.pinimg.com/1200x/0f/33/86/0f3386a3ce453aa9144d38c7e9722008.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue","Baby blue"], available: true },
   { name: "The Starfish necklace", price: 70, images: ["https://i.pinimg.com/1200x/45/16/9b/45169bdd8392161754c3ee9d1a09ccf9.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue","Pink"], available: true },
@@ -572,23 +637,24 @@ const products = [
   { name: "The Short edition", price: 100, images: ["https://i.pinimg.com/1200x/10/68/6c/10686c44dfae097ae8e637d0b8553d31.jpg", "https://i.pinimg.com/1200x/76/dc/d2/76dcd2d791ce0e211c666271110d45bd.jpg"], colors: ["Pink"], available: true },
   { name: "The Phone Chain", price: 120, images: ["https://i.pinimg.com/1200x/84/e0/6f/84e06f42fa7e1f3a32c93e9dcc06a58e.jpg"], colors: ["White"], available: true },
   { name: "The Watermelon", price: 50, images: ["https://i.pinimg.com/1200x/5a/91/5a/5a915a934df0098d389ac7fd6947eef2.jpg", "https://i.pinimg.com/1200x/c0/87/93/c08793abf0fcd8d319a637cbfc2c9127.jpg"], colors: ["Red","Pink"], available: true },
-  { name: "Le Téléphone", price: 80, images: ["https://i.pinimg.com/1200x/bd/2b/26/bd2b26b7f47c222b5e43008866808e3a.jpg"], colors: ["White"], available: true },
+  { name: "Le Téléphone", price: 90, images: ["https://i.pinimg.com/1200x/bd/2b/26/bd2b26b7f47c222b5e43008866808e3a.jpg"], colors: ["White"], available: true },
   { name: "The Crystal Clear", price: 100, images: ["https://i.pinimg.com/1200x/29/d0/49/29d0493651107935af22132dcbfc73a5.jpg", "https://i.pinimg.com/736x/fa/ba/12/faba12b64bd8ae301911e93304e3395b.jpg"], colors: ["Gold"], available: true },
   { name: "The Stainless Bracelet", price: 100, images: ["https://i.pinimg.com/736x/97/94/74/9794740d2b09cb7bff842b648e604495.jpg", "https://i.pinimg.com/736x/cd/1e/91/cd1e912a71d67a5781eb1c2fbad46ad4.jpg"], colors: ["Gold"], available: true },
-  { name: "Aventurine Stone Beaded Necklace", price: 110, images: ["https://i.pinimg.com/1200x/5e/9d/21/5e9d21c3a0ccc75d676b679180c2c6e2.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
+  { name: "Aventurine Stone Beaded Necklace", price: 110, images: ["https://i.pinimg.com/1200x/5e/9d/21/5e9d21c3a0ccc75d676b679180c2c6e2.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Blue"], available: true },
   { name: "Polka Dot Clownfish Necklace", price: 110, images: ["https://ricidress.com/cdn/shop/files/ff29445a62fe67b1181b8218994e5fb1_1080x.jpg?v=1743415855"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
-  { name: "Dainty Pink Set", price: 100, images: ["https://i.pinimg.com/736x/4a/40/71/4a4071b3089baf5fbd1a29f5fbdafff3.jpg"], colors: ["Pink"], available: true },
+  { name: "Dainty Pink Set", price: 110, images: ["https://i.pinimg.com/736x/4a/40/71/4a4071b3089baf5fbd1a29f5fbdafff3.jpg"], colors: ["Pink"], available: true },
   { name: "Glowy Bean Necklace", price: 80, images: ["https://i.pinimg.com/1200x/a7/a3/11/a7a3119e0e34ceaf07124b5b35cebd76.jpg","https://i.pinimg.com/736x/c9/cd/9a/c9cd9ab8340c52485798cf68c80f9628.jpg"], colors: ["Red"], available: true },
   { name: "Cherry necklace", price: 60, images: ["https://i.pinimg.com/736x/a8/d7/ae/a8d7ae17490a6a7e09b2ce39e43c36d5.jpg","https://i.pinimg.com/1200x/9c/62/3f/9c623f41ff207b1734eaf507e5037f48.jpg"], colors: ["Red"], available: true },
   { name: "Freshwater pearl Necklace", price: 120, images: ["https://i.pinimg.com/1200x/43/98/bc/4398bc77f3026e91675a22a4d6d5d81c.jpg"], colors: ["Multicolored"], available: true },
   { name: "Night's out Necklace", price: 200, images: ["https://i.pinimg.com/736x/15/83/b3/1583b33041137b331062a9b7e9e3a7cb.jpg","https://i.pinimg.com/1200x/ea/51/af/ea51af2d3e8132bcdd174a1556562f37.jpg"], colors: ["Gold"], available: true },
   { name: "The Unique", price: 120, images: ["https://i.pinimg.com/1200x/92/d5/6e/92d56e013838777cc531b46d7501b7b5.jpg"], colors: ["White"], available: true },
-  { name: "Pérolas Falsas", price: 120, images: ["https://i.pinimg.com/1200x/b3/13/5c/b3135cd9af625c5854a4a5c2098d28c6.jpg","https://i.pinimg.com/1200x/b3/13/5c/b3135cd9af625c5854a4a5c2098d28c6.jpghttps://i.pinimg.com/1200x/b3/13/5c/b3135cd9af625c5854a4a5c2098d28c6.jpg"], colors: ["White"], available: true },
+  { name: "Pérolas Falsas", price: 120, images: ["https://i.pinimg.com/1200x/b3/13/5c/b3135cd9af625c5854a4a5c2098d28c6.jpg"], colors: ["White"], available: true },
   { name: "The Salty", price: 120, images: ["https://i.pinimg.com/1200x/fb/52/96/fb529669357a45b4adc926292b788545.jpg","https://i.pinimg.com/1200x/90/1d/eb/901deb5fb37740b43f6202654687b505.jpg"], colors: ["White","Blue"], available: true },
   { name: "The Modern Stainless", price: 120, images: ["https://i.pinimg.com/1200x/42/e8/69/42e8691e21c841bd0889db78b109a688.jpg"], colors: ["Gold"], available: true },
   { name: "The Non-Chalant", price: 90, images: ["https://i.pinimg.com/1200x/16/58/f6/1658f65b42a5f05cd3c3d9e157025fbc.jpg","https://i.pinimg.com/1200x/f8/df/a4/f8dfa4f4046b3d3353092bb2d5163da5.jpg","https://i.pinimg.com/1200x/fd/0c/df/fd0cdf4677da5336940ae7b11095855f.jpg"], colors: ["Pink","White","Baby blue"], available: true },
   { name: "The Coral Nrcklace", price: 120, images: ["https://i.pinimg.com/1200x/e8/af/02/e8af023420b9483621ad930678f58671.jpg"], colors: ["Red"], available: true },
   { name: "Addie Pearl Bracelet", price: 120, images: ["https://i.pinimg.com/736x/b2/08/4b/b2084b5f8e1fdd356bf98b5c346fbe78.jpg"], colors: ["Gold"], available: true },
+  { name: "The Turtle Earrings", price: 70, images: ["https://i.pinimg.com/1200x/1a/1d/06/1a1d061bc7b8181519aca224a7a7da43.jpg","https://i.pinimg.com/736x/0b/3b/ee/0b3bee2f71dad55430cd2d1ae35a09a0.jpg"], colors: ["Silver","Gold"], available: true },
 ];
 
 const WHATSAPP_NUMBER = "201270587767"; // 01270587767 in international format (20 = Egypt code, leading 0 dropped)
@@ -627,7 +693,9 @@ products.forEach((p, i) => {
   if (images.length === 0){
     imgHTML = placeholderSVG();
   } else {
-    const slides = images.map(url => `<img src="${url}" alt="${p.name}">`).join('');
+    const slides = images.map((url, di) =>
+      `<img src="${url}" alt="${p.name}" onclick="handleImgTap(${i}, ${di}, event)">`
+    ).join('');
     const navHTML = images.length > 1 ? `
         <button class="img-nav prev" onclick="prevImg(${i}, event)">‹</button>
         <button class="img-nav next" onclick="nextImg(${i}, event)">›</button>
@@ -672,7 +740,16 @@ products.forEach((p, i) => {
   if (images.length > 1){
     const track = document.getElementById('track-' + i);
     let startX = 0;
-    track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+    track.dataset.wasSwipe = 'false';
+    track.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+      track.dataset.wasSwipe = 'false';
+    }, { passive: true });
+    track.addEventListener('touchmove', e => {
+      if (Math.abs(e.touches[0].clientX - startX) > 10){
+        track.dataset.wasSwipe = 'true';
+      }
+    }, { passive: true });
     track.addEventListener('touchend', e => {
       const endX = e.changedTouches[0].clientX;
       const diff = startX - endX;
@@ -681,6 +758,16 @@ products.forEach((p, i) => {
     });
   }
 });
+
+/* A tap on the image opens the zoom lightbox — unless it was actually a swipe */
+function handleImgTap(i, di, e){
+  const track = document.getElementById('track-' + i);
+  if (track && track.dataset.wasSwipe === 'true'){
+    track.dataset.wasSwipe = 'false';
+    return;
+  }
+  openLightbox(i, di, e);
+}
 
 function goToImg(i, idx, e){
   if (e) e.stopPropagation();
@@ -903,7 +990,141 @@ function closeBubble(e){
   document.getElementById('customBubble').classList.add('hide');
 }
 
-updateCartUI();
+/* ================================================================================
+   ZOOM LIGHTBOX — full-screen viewer with pinch-to-zoom / click-to-zoom / pan
+   ================================================================================ */
+let lb = { productIndex: null, imgIndex: 0, zoom: 1, panX: 0, panY: 0 };
+
+function openLightbox(i, di, e){
+  if (e) e.stopPropagation();
+  lb.productIndex = i;
+  lb.imgIndex = di;
+  resetZoom();
+  renderLightbox();
+  document.getElementById('lightboxOverlay').classList.add('active');
+}
+
+function closeLightbox(e){
+  if (e) e.stopPropagation();
+  document.getElementById('lightboxOverlay').classList.remove('active');
+  resetZoom();
+}
+
+function renderLightbox(){
+  const p = products[lb.productIndex];
+  const images = p.images || [];
+  const img = document.getElementById('lightboxImg');
+  img.src = images[lb.imgIndex] || '';
+  img.alt = p.name;
+
+  const multi = images.length > 1;
+  document.getElementById('lightboxPrevBtn').style.display = multi ? 'flex' : 'none';
+  document.getElementById('lightboxNextBtn').style.display = multi ? 'flex' : 'none';
+
+  const dotsWrap = document.getElementById('lightboxDots');
+  dotsWrap.innerHTML = multi
+    ? images.map((_, di) => `<span class="img-dot ${di===lb.imgIndex?'active':''}"></span>`).join('')
+    : '';
+}
+
+function lightboxStep(dir, e){
+  if (e) e.stopPropagation();
+  const p = products[lb.productIndex];
+  const total = (p.images || []).length;
+  lb.imgIndex = ((lb.imgIndex + dir) % total + total) % total;
+  resetZoom();
+  renderLightbox();
+}
+
+function resetZoom(){
+  lb.zoom = 1; lb.panX = 0; lb.panY = 0;
+  const img = document.getElementById('lightboxImg');
+  if (img){
+    img.style.transform = 'translate(0px,0px) scale(1)';
+    img.classList.remove('zoomed');
+  }
+}
+
+function applyLightboxTransform(){
+  const img = document.getElementById('lightboxImg');
+  img.style.transform = `translate(${lb.panX}px, ${lb.panY}px) scale(${lb.zoom})`;
+  img.classList.toggle('zoomed', lb.zoom > 1);
+}
+
+/* Click / tap to toggle zoom in/out (desktop + simple mobile tap) */
+document.addEventListener('DOMContentLoaded', () => {
+  const img = document.getElementById('lightboxImg');
+  let isDragging = false;
+  let dragStartX = 0, dragStartY = 0, panStartX = 0, panStartY = 0;
+  let didDrag = false;
+
+  img.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (didDrag){ didDrag = false; return; } // don't toggle zoom right after a drag
+    if (lb.zoom === 1){
+      lb.zoom = 2.4;
+    } else {
+      lb.zoom = 1; lb.panX = 0; lb.panY = 0;
+    }
+    applyLightboxTransform();
+  });
+
+  // Mouse drag panning (desktop)
+  img.addEventListener('mousedown', (e) => {
+    if (lb.zoom === 1) return;
+    isDragging = true; didDrag = false;
+    dragStartX = e.clientX; dragStartY = e.clientY;
+    panStartX = lb.panX; panStartY = lb.panY;
+    img.classList.add('dragging');
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - dragStartX, dy = e.clientY - dragStartY;
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDrag = true;
+    lb.panX = panStartX + dx; lb.panY = panStartY + dy;
+    applyLightboxTransform();
+  });
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+    img.classList.remove('dragging');
+  });
+
+  // Touch: single-finger pan (when zoomed) + two-finger pinch-to-zoom
+  let pinchStartDist = 0, pinchStartZoom = 1;
+  let touchStartX = 0, touchStartY = 0, touchPanStartX = 0, touchPanStartY = 0;
+
+  img.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2){
+      pinchStartDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      pinchStartZoom = lb.zoom;
+    } else if (e.touches.length === 1 && lb.zoom > 1){
+      touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY;
+      touchPanStartX = lb.panX; touchPanStartY = lb.panY;
+    }
+  }, { passive: true });
+
+  img.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2){
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      let newZoom = pinchStartZoom * (dist / pinchStartDist);
+      newZoom = Math.max(1, Math.min(4, newZoom));
+      lb.zoom = newZoom;
+      if (lb.zoom === 1){ lb.panX = 0; lb.panY = 0; }
+      applyLightboxTransform();
+    } else if (e.touches.length === 1 && lb.zoom > 1){
+      const dx = e.touches[0].clientX - touchStartX;
+      const dy = e.touches[0].clientY - touchStartY;
+      lb.panX = touchPanStartX + dx; lb.panY = touchPanStartY + dy;
+      applyLightboxTransform();
+    }
+  }, { passive: true });
+});
 </script>
 
 </body>
