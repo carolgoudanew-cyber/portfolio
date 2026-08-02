@@ -33,12 +33,6 @@ body{
 img{ max-width:100%; display:block; }
 a{ color:inherit; }
 
-/* =========================================================
-   MOBILE-FIRST BASE STYLES (small screens by default)
-   A "@media (min-width:641px)" block near the bottom scales
-   everything up for tablets/desktops.
-   ========================================================= */
-
 header{
   position:sticky; top:0; z-index:40;
   background:var(--white);
@@ -55,6 +49,9 @@ header{
   color:var(--brown-dark);
 }
 .logo span{ color:var(--brown-mid); font-style:italic; }
+
+.nav-right{ display:flex; align-items:center; gap:10px; }
+
 .cart-btn{
   display:flex; align-items:center; gap:6px;
   background:var(--brown-dark); color:var(--white);
@@ -69,6 +66,38 @@ header{
   display:inline-flex; align-items:center; justify-content:center;
   font-size:11px; font-weight:600;
 }
+
+.custom-wrap{ position:relative; }
+.custom-btn{
+  width:36px; height:36px; border-radius:50%;
+  background:#25D366; color:#fff; border:none;
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.18);
+  transition:transform .15s ease;
+}
+.custom-btn:hover{ transform:scale(1.06); }
+.custom-bubble{
+  position:absolute; top:46px; right:0;
+  width:198px;
+  background:var(--white); color:var(--brown-dark);
+  border:1px solid var(--line); border-radius:12px;
+  padding:11px 26px 11px 12px;
+  font-size:11.5px; line-height:1.5;
+  box-shadow:0 10px 24px var(--shadow);
+  z-index:45; cursor:pointer;
+}
+.custom-bubble::before{
+  content:''; position:absolute; top:-7px; right:14px;
+  width:12px; height:12px; background:var(--white);
+  border-left:1px solid var(--line); border-top:1px solid var(--line);
+  transform:rotate(45deg);
+}
+.bubble-close{
+  position:absolute; top:5px; right:7px;
+  background:none; border:none; font-size:11px; cursor:pointer;
+  color:var(--brown-mid); line-height:1;
+}
+.custom-bubble.hide{ display:none; }
 
 .hero{
   text-align:center;
@@ -106,7 +135,6 @@ header{
 }
 .section-title p{ color:var(--brown-mid); font-size:12px; margin-top:6px; }
 
-/* Product grid: 2 columns side by side on phones by default */
 .grid{
   max-width:1180px; margin:0 auto;
   padding:0 14px 50px;
@@ -304,14 +332,13 @@ footer{
 }
 footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brown-dark); display:block; margin-bottom:6px;}
 
-/* =========================================================
-   DESKTOP / TABLET OVERRIDES (screens 641px and wider)
-   ========================================================= */
 @media (min-width:641px){
   .nav-wrap{ padding:18px 28px; }
   .logo{ font-size:32px; }
   .cart-btn{ padding:11px 20px; font-size:14px; }
   .cart-count{ width:20px; height:20px; font-size:12px; }
+  .custom-btn{ width:42px; height:42px; font-size:19px; }
+  .custom-bubble{ width:230px; font-size:12.5px; padding:13px 28px 13px 14px; top:52px; }
 
   .hero{ padding:70px 24px 56px; }
   .hero .eyebrow{ font-size:12px; letter-spacing:4px; margin-bottom:14px; }
@@ -361,6 +388,7 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
   .grid{ gap:10px; padding:0 10px 40px; }
   .card-body{ padding:9px; }
   .card-name{ font-size:14px; }
+  .custom-bubble{ width:170px; font-size:10.5px; }
 }
 </style>
 </head>
@@ -369,9 +397,18 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
 <header>
   <div class="nav-wrap">
     <div class="logo">Elegance<span>.</span></div>
-    <button class="cart-btn" onclick="openCart()">
-      🛍 Cart <span class="cart-count" id="cartCount">0</span>
-    </button>
+    <div class="nav-right">
+      <div class="custom-wrap">
+        <div class="custom-bubble" id="customBubble" onclick="openCustomChat()">
+          Want a custom piece or have a question? Tap to chat with us 💬
+          <button class="bubble-close" onclick="closeBubble(event)">✕</button>
+        </div>
+        <button class="custom-btn" onclick="openCustomChat()" aria-label="Ask a question or request a custom piece">💬</button>
+      </div>
+      <button class="cart-btn" onclick="openCart()">
+        🛍 Cart <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -470,7 +507,19 @@ const products = [
   { name: "The Star Necklace", price: 100, image: "https://i.pinimg.com/1200x/96/f5/b4/96f5b47fcd596c729be96b4656cfb1cd.jpg", colors: ["White","Blue"], available: true },
   { name: "Key Chain with name", price: 80, image: "https://i.pinimg.com/1200x/9e/9f/e7/9e9fe7177cb7e3662d8082579eb03d16.jpg", colors: ["Multicolor"], available: true },
   { name: "Aqua Beaded Neckalce", price: 90, image: "https://i.pinimg.com/1200x/d6/82/d9/d682d9daf1e35c44653bb9752af5e70b.jpg", colors: ["Blue"], available: true },
-  { name: "A set of two Necklaces", price: 120, image: "https://i.pinimg.com/1200x/26/86/71/268671794770c4e134e76235e5de060c.jpg", colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true }
+  { name: "A set of two Necklaces", price: 120, image: "https://i.pinimg.com/1200x/26/86/71/268671794770c4e134e76235e5de060c.jpg", colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
+  { name: "One multicolored Necklace", price: 100, image: "https://i.pinimg.com/736x/37/55/5c/37555cb53aa623b97dcf82a99e2c210c.jpg", colors: ["Gold","Silver"], available: true },
+  { name: "Pearls Chain", price: 50, image: "https://i.pinimg.com/1200x/b6/5d/cb/b65dcbd2427f1616c741000aa824cadf.jpg", colors: ["Gold","Silver"], available: true },
+  { name: "The Classy Necklace", price: 80, image: "https://i.pinimg.com/1200x/0c/19/14/0c19147dab7cf2d3ae87cdcd60f3252c.jpg", colors: ["Gold","Silver"], available: true },
+  { name: "The Starry Necklace", price: 120, image: "https://i.pinimg.com/736x/f6/50/73/f65073f8acb25b867d2b343d5c16eae6.jpg", colors: ["Gold","Silver"], available: true },
+  { name: "The Fish earrings", price: 80, image: "https://i.pinimg.com/1200x/be/b8/f0/beb8f01098049adcdb619cc82ace3cda.jpg", colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
+  { name: "The Eyed Stainless Bracelet", price: 80, image: "https://i.pinimg.com/1200x/4c/88/4a/4c884a9cd120a65dbf1e2af435127ba0.jpg", colors: ["Multicolored"], available: true },
+  { name: "A set of two necklace", price: 80, image: "https://i.pinimg.com/736x/7e/88/82/7e88823affd6e0656acf44833fdd2554.jpg", colors: ["White","Blue"], available: true },
+  { name: "The Hot summer girl Necklace", price: 100, image: "https://i.pinimg.com/1200x/0f/33/86/0f3386a3ce453aa9144d38c7e9722008.jpg", colors: ["Brown","Yellow","Purple","Green","White","Red","Blue","Baby blue"], available: true },
+  { name: "The Starfish necklace", price: 50, image: "https://i.pinimg.com/1200x/45/16/9b/45169bdd8392161754c3ee9d1a09ccf9.jpg", colors: ["Brown","Yellow","Purple","Green","White","Red","Blue","Pink"], available: true },
+  { name: "The Cool set of three Stainless", price: 120, image: "https://i.pinimg.com/1200x/03/4e/1d/034e1db62dc9e7bd65b59d6e32018f8e.jpg", colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
+  { name: "The Basic layered Necklace", price: 80, image: "https://i.pinimg.com/1200x/7c/f3/26/7cf32685b74657ec307e3ec935d8ed26.jpg", colors: ["Golden","Silver"], available: true },
+  { name: "The Sparkle Stainless earrings", price: 80, image: "https://i.pinimg.com/1200x/4c/31/04/4c31048bde5c8373215c3f507d9699a7.jpg", colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true }
 ];
 
 const WHATSAPP_NUMBER = "201270587767"; // 01270587767 in international format (20 = Egypt code, leading 0 dropped)
@@ -541,13 +590,14 @@ products.forEach((p, i) => {
   grid.appendChild(card);
 });
 
+/* colorToCSS: handles both "Multicolor" and "Multicolored", both "Gold" and "Golden" */
 function colorToCSS(name){
   const key = name.toLowerCase();
-  if (key === 'multicolor'){
+  if (key.startsWith('multicolor')){
     return 'conic-gradient(from 0deg, #6F4E37, #C8A87A, #E4B94F, #8B3A3A, #4B6B5E, #6F4E37)';
   }
   const map = {
-    brown:'#6F4E37', white:'#FFFFFF', gold:'#C8A87A', cream:'#F0E6D8',
+    brown:'#6F4E37', white:'#FFFFFF', gold:'#C8A87A', golden:'#C8A87A', cream:'#F0E6D8',
     beige:'#E4D6C1', black:'#2b2b2b', tan:'#C8A87A', ivory:'#FBF6EE',
     red:'#A5473B', blue:'#3F5C73', green:'#4B6B4E', pink:'#D8A6A0',
     yellow:'#D9B84E', grey:'#9B9B9B', gray:'#9B9B9B',
@@ -712,6 +762,17 @@ function placeOrder(){
 
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank');
+}
+
+/* Custom order / question chat button (top right) */
+function openCustomChat(){
+  const msg = "Hi Elegance! I have a question or would like to request a custom piece:";
+  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+function closeBubble(e){
+  e.stopPropagation();
+  document.getElementById('customBubble').classList.add('hide');
 }
 
 updateCartUI();
