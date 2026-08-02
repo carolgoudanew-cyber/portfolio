@@ -152,17 +152,46 @@ header{
 }
 .card:hover{ transform:translateY(-4px); box-shadow:0 16px 32px var(--shadow); }
 
+/* ---------- Swipeable image carousel ---------- */
 .card-img{
   aspect-ratio:1/1;
   background:var(--cream);
-  display:flex; align-items:center; justify-content:center;
+  position:relative;
   overflow:hidden;
   border-bottom:1px solid var(--line);
 }
-.card-img img{ width:100%; height:100%; object-fit:cover; }
+.img-track{
+  display:flex; height:100%;
+  transition:transform .3s ease;
+  touch-action: pan-y;
+}
+.img-track img{
+  width:100%; height:100%; object-fit:cover; flex-shrink:0;
+}
+.img-nav{
+  position:absolute; top:50%; transform:translateY(-50%);
+  background:rgba(255,255,255,.88); border:none;
+  width:24px; height:24px; border-radius:50%;
+  cursor:pointer; font-size:14px; color:var(--brown-dark);
+  display:flex; align-items:center; justify-content:center;
+  z-index:2; padding:0; line-height:1;
+}
+.img-nav.prev{ left:6px; }
+.img-nav.next{ right:6px; }
+.img-dots{
+  position:absolute; bottom:7px; left:0; right:0;
+  display:flex; justify-content:center; gap:4px; z-index:2;
+}
+.img-dot{
+  width:5px; height:5px; border-radius:50%;
+  background:rgba(255,255,255,.65); cursor:pointer;
+}
+.img-dot.active{ background:#fff; width:14px; border-radius:3px; transition:.2s ease; }
+
 .placeholder{
   display:flex; flex-direction:column; align-items:center; gap:6px;
   color:var(--brown-mid); opacity:.6; padding:14px; text-align:center;
+  width:100%; height:100%; justify-content:center;
 }
 .placeholder svg{ width:32px; height:32px; }
 .placeholder span{ font-size:9px; letter-spacing:.5px; }
@@ -269,7 +298,16 @@ header{
   border-top:1px solid var(--line); margin-bottom:16px;
 }
 .ship-note{
-  font-size:11px; color:var(--brown-mid); margin:-2px 0 12px; text-align:right;
+  font-size:11px; color:var(--brown-mid); margin:2px 0 8px; text-align:center;
+}
+.ship-note.done{ color:#4b7c4b; font-weight:600; }
+.ship-progress-bar{
+  height:6px; background:var(--line); border-radius:4px; overflow:hidden; margin-bottom:4px;
+}
+.ship-progress-fill{
+  height:100%; width:0%; border-radius:4px;
+  background:linear-gradient(90deg, var(--tan), var(--brown-dark));
+  transition:width .35s ease;
 }
 
 #checkoutForm{ display:none; }
@@ -365,6 +403,7 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
   .qty-row button{ width:28px; height:28px; font-size:16px; }
   .qty-row input{ width:36px; font-size:15px; }
   .add-btn{ padding:12px; font-size:14px; }
+  .img-nav{ width:30px; height:30px; font-size:17px; }
 
   .drawer{ width:min(440px,92vw); }
   .drawer-head{ padding:22px 24px; }
@@ -445,9 +484,11 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
 
   <div class="drawer-foot">
     <div id="cartSummary">
+      <div class="ship-progress-bar"><div class="ship-progress-fill" id="shipProgressFill"></div></div>
+      <div class="ship-note" id="cartShipNote">Free shipping over 250 EGP</div>
+
       <div class="total-row"><span>Subtotal</span><span id="cartSubtotal">0 EGP</span></div>
       <div class="total-row"><span>Shipping</span><span id="cartShipping">0 EGP</span></div>
-      <div class="ship-note" id="cartShipNote">Free shipping over 250 EGP</div>
       <div class="total-row grand"><span>Total</span><span id="cartTotal">0 EGP</span></div>
       <button class="proceed-btn" onclick="goToCheckout()">Proceed to Checkout</button>
     </div>
@@ -493,33 +534,46 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
 <script>
 /* ================================================================================
    EDIT ZONE — products, WhatsApp number, InstaPay handle, shipping rules
+
+   Each product uses "images: [...]".
+   - One photo? Just one link: images: ["https://..."]
+   - Multiple photos? images: ["https://link1.jpg", "https://link2.jpg"]
+     Customers get swipe/arrow navigation automatically when there's more than one.
    ================================================================================ */
 const products = [
-  { name: "Beaded Bracelet Set", price: 60, image: "https://i.pinimg.com/1200x/41/f2/88/41f288e218ccc1f2ea3162bb3d13f1b8.jpg", colors: ["Blue", "White", "Gold", "Baby blue"], available: true },
-  { name: "Heart Necklace", price: 150, image: "https://img.staticdj.com/773abaef977334e2b8eb384cc0c3b79b_1024x.jpeg", colors: ["Brown", "Blue", "Red","Green","Yellow","Purple"], available: true },
-  { name: "Handmade Shell Earrings Stainless", price: 80, image: "https://i.pinimg.com/1200x/00/86/6f/00866f42ee1b7f4d9284bbf4e97947e4.jpg", colors: ["White"], available: true },
-  { name: "Shell Necklace", price: 120, image: "https://i.pinimg.com/1200x/e5/87/1c/e5871c79df8ea7a1b2eb39848b4621ee.jpg", colors: ["Brown","Yellow","Purple","Green","White","Red"], available: true },
-  { name: "Stainless Necklace Set", price: 150, image: "https://magchic.com/cdn/shop/products/P7200466-2.jpg?v=1680068187", colors: ["Silver"], available: true },
-  { name: "One Summmer Necklace", price: 80, image: "https://i.pinimg.com/736x/ab/2f/6b/ab2f6b5896c486d8a4f3a40f10108728.jpg", colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
-  { name: "Vintage Necklace", price: 80, image: "https://wiaps.com/cdn/shop/files/vintage-18k-gold-plated-big-red-onyx-round-bead-choker-necklace-Red-3.jpg?v=1723912466", colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
-  { name: "Beach Necklace", price: 50, image: "https://i.pinimg.com/736x/42/9b/da/429bdaaadfeb0a14cc0ba35988aeaabb.jpg", colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
-  { name: "Tanning Necklace", price: 110, image: "https://i.pinimg.com/1200x/f1/90/88/f19088cea2c05cd75c3526afb1a4a351.jpg", colors: ["White","Blue"], available: true },
-  { name: "The Star Necklace", price: 100, image: "https://i.pinimg.com/1200x/96/f5/b4/96f5b47fcd596c729be96b4656cfb1cd.jpg", colors: ["White","Blue"], available: true },
-  { name: "Key Chain with name", price: 80, image: "https://i.pinimg.com/1200x/9e/9f/e7/9e9fe7177cb7e3662d8082579eb03d16.jpg", colors: ["Multicolor"], available: true },
-  { name: "Aqua Beaded Neckalce", price: 90, image: "https://i.pinimg.com/1200x/d6/82/d9/d682d9daf1e35c44653bb9752af5e70b.jpg", colors: ["Blue"], available: true },
-  { name: "A set of two Necklaces", price: 120, image: "https://i.pinimg.com/1200x/26/86/71/268671794770c4e134e76235e5de060c.jpg", colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
-  { name: "One multicolored Necklace", price: 100, image: "https://i.pinimg.com/736x/37/55/5c/37555cb53aa623b97dcf82a99e2c210c.jpg", colors: ["Gold","Silver"], available: true },
-  { name: "Pearls Chain", price: 50, image: "https://i.pinimg.com/1200x/b6/5d/cb/b65dcbd2427f1616c741000aa824cadf.jpg", colors: ["Gold","Silver"], available: true },
-  { name: "The Classy Necklace", price: 80, image: "https://i.pinimg.com/1200x/0c/19/14/0c19147dab7cf2d3ae87cdcd60f3252c.jpg", colors: ["Gold","Silver"], available: true },
-  { name: "The Starry Necklace", price: 120, image: "https://i.pinimg.com/736x/f6/50/73/f65073f8acb25b867d2b343d5c16eae6.jpg", colors: ["Gold","Silver"], available: true },
-  { name: "The Fish earrings", price: 80, image: "https://i.pinimg.com/1200x/be/b8/f0/beb8f01098049adcdb619cc82ace3cda.jpg", colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
-  { name: "The Eyed Stainless Bracelet", price: 80, image: "https://i.pinimg.com/1200x/4c/88/4a/4c884a9cd120a65dbf1e2af435127ba0.jpg", colors: ["Multicolored"], available: true },
-  { name: "A set of two necklace", price: 80, image: "https://i.pinimg.com/736x/7e/88/82/7e88823affd6e0656acf44833fdd2554.jpg", colors: ["White","Blue"], available: true },
-  { name: "The Hot summer girl Necklace", price: 100, image: "https://i.pinimg.com/1200x/0f/33/86/0f3386a3ce453aa9144d38c7e9722008.jpg", colors: ["Brown","Yellow","Purple","Green","White","Red","Blue","Baby blue"], available: true },
-  { name: "The Starfish necklace", price: 50, image: "https://i.pinimg.com/1200x/45/16/9b/45169bdd8392161754c3ee9d1a09ccf9.jpg", colors: ["Brown","Yellow","Purple","Green","White","Red","Blue","Pink"], available: true },
-  { name: "The Cool set of three Stainless", price: 120, image: "https://i.pinimg.com/1200x/03/4e/1d/034e1db62dc9e7bd65b59d6e32018f8e.jpg", colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
-  { name: "The Basic layered Necklace", price: 80, image: "https://i.pinimg.com/1200x/7c/f3/26/7cf32685b74657ec307e3ec935d8ed26.jpg", colors: ["Golden","Silver"], available: true },
-  { name: "The Sparkle Stainless earrings", price: 80, image: "https://i.pinimg.com/1200x/4c/31/04/4c31048bde5c8373215c3f507d9699a7.jpg", colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true }
+  { name: "Beaded Bracelet Set", price: 60, images: ["https://i.pinimg.com/1200x/41/f2/88/41f288e218ccc1f2ea3162bb3d13f1b8.jpg"], colors: ["Blue", "White", "Gold", "Baby blue"], available: true },
+  { name: "Heart Necklace", price: 150, images: ["https://img.staticdj.com/773abaef977334e2b8eb384cc0c3b79b_1024x.jpeg"], colors: ["Brown", "Blue", "Red","Green","Yellow","Purple"], available: true },
+  { name: "Handmade Shell Earrings Stainless", price: 80, images: ["https://i.pinimg.com/1200x/00/86/6f/00866f42ee1b7f4d9284bbf4e97947e4.jpg"], colors: ["White"], available: true },
+  { name: "Shell Necklace", price: 120, images: ["https://i.pinimg.com/1200x/e5/87/1c/e5871c79df8ea7a1b2eb39848b4621ee.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red"], available: true },
+  { name: "Stainless Necklace Set", price: 150, images: ["https://magchic.com/cdn/shop/products/P7200466-2.jpg?v=1680068187"], colors: ["Silver"], available: true },
+  { name: "One Summmer Necklace", price: 80, images: ["https://i.pinimg.com/736x/ab/2f/6b/ab2f6b5896c486d8a4f3a40f10108728.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
+  { name: "Vintage Necklace", price: 80, images: ["https://wiaps.com/cdn/shop/files/vintage-18k-gold-plated-big-red-onyx-round-bead-choker-necklace-Red-3.jpg?v=1723912466"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
+  { name: "Beach Necklace", price: 50, images: ["https://i.pinimg.com/736x/42/9b/da/429bdaaadfeb0a14cc0ba35988aeaabb.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
+  { name: "Tanning Necklace", price: 110, images: ["https://i.pinimg.com/1200x/f1/90/88/f19088cea2c05cd75c3526afb1a4a351.jpg"], colors: ["White","Blue"], available: true },
+  { name: "The Star Necklace", price: 100, images: ["https://i.pinimg.com/1200x/96/f5/b4/96f5b47fcd596c729be96b4656cfb1cd.jpg"], colors: ["White","Blue"], available: true },
+  { name: "Key Chain with name", price: 60, images: ["https://i.pinimg.com/1200x/9e/9f/e7/9e9fe7177cb7e3662d8082579eb03d16.jpg"], colors: ["Multicolor"], available: true },
+  { name: "Aqua Beaded Neckalce", price: 90, images: ["https://i.pinimg.com/1200x/d6/82/d9/d682d9daf1e35c44653bb9752af5e70b.jpg"], colors: ["Blue"], available: true },
+  { name: "A set of two Necklaces", price: 120, images: ["https://i.pinimg.com/1200x/26/86/71/268671794770c4e134e76235e5de060c.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
+  { name: "One multicolored Necklace", price: 100, images: ["https://i.pinimg.com/736x/37/55/5c/37555cb53aa623b97dcf82a99e2c210c.jpg"], colors: ["Gold","Silver"], available: true },
+  { name: "Pearls Chain", price: 50, images: ["https://i.pinimg.com/1200x/b6/5d/cb/b65dcbd2427f1616c741000aa824cadf.jpg"], colors: ["Gold","Silver"], available: true },
+  { name: "The Classy Necklace", price: 80, images: ["https://i.pinimg.com/1200x/0c/19/14/0c19147dab7cf2d3ae87cdcd60f3252c.jpg"], colors: ["Gold","Silver"], available: true },
+  { name: "The Starry Necklace", price: 120, images: ["https://i.pinimg.com/736x/f6/50/73/f65073f8acb25b867d2b343d5c16eae6.jpg"], colors: ["Gold","Silver"], available: true },
+  { name: "The Fish Earrings", price: 80, images: ["https://i.pinimg.com/1200x/be/b8/f0/beb8f01098049adcdb619cc82ace3cda.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
+  { name: "The Eyed Stainless Bracelet", price: 80, images: ["https://i.pinimg.com/1200x/4c/88/4a/4c884a9cd120a65dbf1e2af435127ba0.jpg"], colors: ["Multicolored"], available: true },
+  { name: "A set of two necklace", price: 80, images: ["https://i.pinimg.com/736x/7e/88/82/7e88823affd6e0656acf44833fdd2554.jpg"], colors: ["White","Blue"], available: true },
+  { name: "The Hot summer girl Necklace", price: 100, images: ["https://i.pinimg.com/1200x/0f/33/86/0f3386a3ce453aa9144d38c7e9722008.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue","Baby blue"], available: true },
+  { name: "The Starfish necklace", price: 50, images: ["https://i.pinimg.com/1200x/45/16/9b/45169bdd8392161754c3ee9d1a09ccf9.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue","Pink"], available: true },
+  { name: "The Cool set of three Stainless", price: 120, images: ["https://i.pinimg.com/1200x/03/4e/1d/034e1db62dc9e7bd65b59d6e32018f8e.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
+  { name: "The Basic layered Necklace", price: 80, images: ["https://i.pinimg.com/1200x/7c/f3/26/7cf32685b74657ec307e3ec935d8ed26.jpg"], colors: ["Golden","Silver"], available: true },
+  { name: "The Sparkle Stainless Earrings", price: 80, images: ["https://i.pinimg.com/1200x/4c/31/04/4c31048bde5c8373215c3f507d9699a7.jpg","https://i.pinimg.com/1200x/49/aa/c1/49aac1c6a37c6a752b8bf4fdf418debd.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
+  { name: "The Ceramic star Earrings", price: 80, images: ["https://i.pinimg.com/1200x/64/a2/93/64a293fcbe9112cec16edac5e34f825a.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
+  { name: "The Nazar Necklace Set", price: 80, images: ["https://i.pinimg.com/736x/44/69/4a/44694a47482b9d699712d977d8f38a39.jpg"], colors: ["Blue"], available: true },
+  { name: "Just a girl Necklace", price: 40, images: ["https://i.pinimg.com/1200x/de/a9/0d/dea90d34b3e1d2ed4c6a153d763dc236.jpg"], colors: ["Multicolored"], available: true },
+  { name: "The Short edition", price: 100, images: ["https://i.pinimg.com/1200x/10/68/6c/10686c44dfae097ae8e637d0b8553d31.jpg", "https://i.pinimg.com/1200x/76/dc/d2/76dcd2d791ce0e211c666271110d45bd.jpg"], colors: ["Pink"], available: true },
+  { name: "The Phone Chain", price: 120, images: ["https://i.pinimg.com/1200x/84/e0/6f/84e06f42fa7e1f3a32c93e9dcc06a58e.jpg"], colors: ["White"], available: true },
+  { name: "The Watermelon", price: 50, images: ["https://i.pinimg.com/1200x/5a/91/5a/5a915a934df0098d389ac7fd6947eef2.jpg", "https://i.pinimg.com/1200x/c0/87/93/c08793abf0fcd8d319a637cbfc2c9127.jpg"], colors: ["Red","Pink"], available: true },
+  { name: "Le Téléphone", price: 80, images: ["https://i.pinimg.com/1200x/bd/2b/26/bd2b26b7f47c222b5e43008866808e3a.jpg"], colors: ["White"], available: true },
+  { name: "The Crystal Clear", price: 100, images: ["https://i.pinimg.com/1200x/29/d0/49/29d0493651107935af22132dcbfc73a5.jpg", "https://i.pinimg.com/736x/fa/ba/12/faba12b64bd8ae301911e93304e3395b.jpg"], colors: ["Gold"], available: true }
 ];
 
 const WHATSAPP_NUMBER = "201270587767"; // 01270587767 in international format (20 = Egypt code, leading 0 dropped)
@@ -533,7 +587,6 @@ const FREE_SHIPPING_THRESHOLD = 250;   // orders at or above this subtotal get f
    ================================================================================ */
 
 document.getElementById('instapayHandleText').textContent = INSTAPAY_HANDLE;
-document.getElementById('cartShipNote').textContent = `Free shipping over ${FREE_SHIPPING_THRESHOLD} EGP`;
 
 const grid = document.getElementById('productGrid');
 let cart = [];
@@ -553,9 +606,21 @@ products.forEach((p, i) => {
   const card = document.createElement('div');
   card.className = 'card';
 
-  const imgHTML = p.image
-    ? `<img src="${p.image}" alt="${p.name}">`
-    : placeholderSVG();
+  const images = (p.images && p.images.length) ? p.images : [];
+
+  let imgHTML;
+  if (images.length === 0){
+    imgHTML = placeholderSVG();
+  } else {
+    const slides = images.map(url => `<img src="${url}" alt="${p.name}">`).join('');
+    const navHTML = images.length > 1 ? `
+        <button class="img-nav prev" onclick="prevImg(${i}, event)">‹</button>
+        <button class="img-nav next" onclick="nextImg(${i}, event)">›</button>
+        <div class="img-dots" id="dots-${i}">
+          ${images.map((_, di) => `<span class="img-dot ${di===0?'active':''}" onclick="goToImg(${i}, ${di}, event)"></span>`).join('')}
+        </div>` : '';
+    imgHTML = `<div class="img-track" id="track-${i}" data-current="0">${slides}</div>${navHTML}`;
+  }
 
   const colorsHTML = (p.colors || []).map((c, ci) => {
     const swatch = colorToCSS(c);
@@ -588,7 +653,40 @@ products.forEach((p, i) => {
     </div>
   `;
   grid.appendChild(card);
+
+  if (images.length > 1){
+    const track = document.getElementById('track-' + i);
+    let startX = 0;
+    track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+    track.addEventListener('touchend', e => {
+      const endX = e.changedTouches[0].clientX;
+      const diff = startX - endX;
+      if (diff > 40) nextImg(i);
+      else if (diff < -40) prevImg(i);
+    });
+  }
 });
+
+function goToImg(i, idx, e){
+  if (e) e.stopPropagation();
+  const track = document.getElementById('track-' + i);
+  const total = track.children.length;
+  idx = ((idx % total) + total) % total;
+  track.style.transform = `translateX(-${idx * 100}%)`;
+  track.dataset.current = idx;
+  const dots = document.querySelectorAll(`#dots-${i} .img-dot`);
+  dots.forEach((d, di) => d.classList.toggle('active', di === idx));
+}
+function nextImg(i, e){
+  if (e) e.stopPropagation();
+  const track = document.getElementById('track-' + i);
+  goToImg(i, parseInt(track.dataset.current || 0) + 1);
+}
+function prevImg(i, e){
+  if (e) e.stopPropagation();
+  const track = document.getElementById('track-' + i);
+  goToImg(i, parseInt(track.dataset.current || 0) - 1);
+}
 
 /* colorToCSS: handles both "Multicolor" and "Multicolored", both "Gold" and "Golden" */
 function colorToCSS(name){
@@ -625,8 +723,9 @@ function addToCart(i){
   const qty = parseInt(document.getElementById('qty-' + i).value);
   const colorRow = document.querySelectorAll('.card')[i].querySelector('.color-row');
   const color = colorRow.dataset.chosen || (p.colors && p.colors[0]) || 'Default';
+  const firstImage = (p.images && p.images[0]) || '';
 
-  cart.push({ name: p.name, price: p.price, color, qty, image: p.image });
+  cart.push({ name: p.name, price: p.price, color, qty, image: firstImage });
   updateCartUI();
   openCart();
 }
@@ -667,6 +766,20 @@ function updateCartUI(){
   const subtotal = cart.reduce((a,c)=> a + c.price*c.qty, 0);
   const shipping = calcShipping(subtotal);
   const total = subtotal + shipping;
+
+  const pct = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
+  document.getElementById('shipProgressFill').style.width = pct + '%';
+  const noteEl = document.getElementById('cartShipNote');
+  if (subtotal >= FREE_SHIPPING_THRESHOLD){
+    noteEl.textContent = "You've unlocked free shipping! 🎉";
+    noteEl.classList.add('done');
+  } else {
+    const remaining = FREE_SHIPPING_THRESHOLD - subtotal;
+    noteEl.textContent = subtotal > 0
+      ? `Add ${remaining} EGP more for free shipping!`
+      : `Free shipping over ${FREE_SHIPPING_THRESHOLD} EGP`;
+    noteEl.classList.remove('done');
+  }
 
   document.getElementById('cartSubtotal').textContent = subtotal + ' EGP';
   document.getElementById('cartShipping').textContent = shipping === 0 ? 'FREE' : shipping + ' EGP';
