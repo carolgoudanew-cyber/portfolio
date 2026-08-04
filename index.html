@@ -73,7 +73,7 @@ header{
 }
 .logo span{ color:var(--brown-mid); font-style:italic; }
 
-.nav-right{ display:flex; align-items:center; gap:10px; }
+.nav-right{ display:flex; align-items:center; gap:7px; }
 
 .cart-btn{
   display:flex; align-items:center; gap:6px;
@@ -158,14 +158,32 @@ header{
 }
 .section-title p{ color:var(--brown-mid); font-size:12px; margin-top:6px; }
 
-/* ---------- Special Offers section ---------- */
-.offers-title h2{ color:#8B3A3A; }
+/* ---------- Special Offers (top-right button + drawer) ---------- */
+.offers-btn{
+  position:relative;
+  display:flex; align-items:center; gap:5px;
+  background:var(--white); color:var(--brown-dark);
+  border:1.5px solid var(--brown-dark); padding:7px 11px; border-radius:30px;
+  font-family:var(--font-body); font-size:11px; letter-spacing:.2px;
+  cursor:pointer; transition:.2s ease; white-space:nowrap;
+}
+.offers-btn:hover{ background:var(--brown-dark); color:var(--white); }
+.offers-badge{
+  position:absolute; top:-6px; right:-6px;
+  background:#A5473B; color:var(--cream);
+  font-size:9px; font-weight:700; line-height:1;
+  min-width:16px; height:16px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  z-index:2;
+  animation: offers-breathe 2.6s ease-in-out infinite;
+}
+@keyframes offers-breathe{
+  0%, 100%{ transform:scale(1); }
+  50%{ transform:scale(1.15); }
+}
+.offers-drawer-sub{ font-size:12px; color:var(--brown-mid); margin-bottom:14px; }
 .offers-grid{
-  max-width:1180px; margin:0 auto;
-  padding:0 14px 10px;
-  display:grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
-  gap:16px;
+  display:flex; flex-direction:column; gap:14px;
 }
 .offer-card{
   background:linear-gradient(160deg, #FFF8EF 0%, var(--white) 60%);
@@ -627,6 +645,9 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
         </div>
         <button class="custom-btn" onclick="openCustomChat()" aria-label="Ask a question or request a custom piece">💬</button>
       </div>
+      <button class="offers-btn" onclick="openOffers()" id="offersBtn">
+        🎁 Offers
+      </button>
       <button class="cart-btn" onclick="openCart()">
         🛍 Cart <span class="cart-count" id="cartCount">0</span>
       </button>
@@ -641,13 +662,6 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
   <div class="divider"></div>
 </section>
 
-<div class="section-title offers-title">
-  <h2>✦ Special Offers ✦</h2>
-  <p>Bundle up and save with our limited-time packages.</p>
-</div>
-
-<div class="offers-grid" id="offersGrid"></div>
-
 <div class="section-title">
   <h2>Our Collection</h2>
   <p>Every piece is made by hand — small imperfections are part of the charm.</p>
@@ -659,6 +673,20 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
   <span class="fname">Elegance</span>
   Handmade accessories · We deliver quality and elegance.
 </footer>
+
+<div class="overlay" id="offersOverlay" onclick="closeOffers()"></div>
+<div class="drawer" id="offersDrawer">
+  <div class="drawer-head">
+    <div class="drawer-head-left">
+      <h3>✦ Special Offers ✦</h3>
+    </div>
+    <button class="close-btn" onclick="closeOffers()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <p class="offers-drawer-sub">Bundle up and save with our limited-time packages.</p>
+    <div class="offers-grid" id="offersGrid"></div>
+  </div>
+</div>
 
 <div class="overlay" id="overlay" onclick="closeCart()"></div>
 <div class="drawer" id="drawer">
@@ -675,7 +703,7 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
   <div class="drawer-foot">
     <div id="cartSummary">
       <div class="ship-progress-bar"><div class="ship-progress-fill" id="shipProgressFill"></div></div>
-      <div class="ship-note" id="cartShipNote">Free shipping over 250 EGP</div>
+      <div class="ship-note" id="cartShipNote">Free shipping over 300 EGP</div>
 
       <div class="promo-progress-bar"><div class="promo-progress-fill" id="promoProgressFill"></div></div>
       <div class="promo-note" id="cartPromoNote">Spend 600 EGP to unlock 10% off!</div>
@@ -749,7 +777,7 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
    ================================================================================ */
 const products = [
   { name: "Beaded Bracelet Set of four", price: 60, images: ["https://i.pinimg.com/1200x/41/f2/88/41f288e218ccc1f2ea3162bb3d13f1b8.jpg"], colors: ["Blue"], available: true },
-  { name: "Heart Necklace", price: 200, images: ["https://img.staticdj.com/773abaef977334e2b8eb384cc0c3b79b_1024x.jpeg","https://img.staticdj.com/c68c6816bbfede9aed5503f8303285df_750x.jpeg"], colors: [ "Blue", "Red"], available: true },
+  { name: "Heart Necklace", price: 150, images: ["https://img.staticdj.com/773abaef977334e2b8eb384cc0c3b79b_1024x.jpeg","https://img.staticdj.com/c68c6816bbfede9aed5503f8303285df_750x.jpeg"], colors: [ "Blue", "Red"], available: true },
   { name: "Handmade Shell Earrings Stainless", price: 80, images: ["https://i.pinimg.com/1200x/00/86/6f/00866f42ee1b7f4d9284bbf4e97947e4.jpg"], colors: ["White"], available: true },
   { name: "Shell Necklace", price: 120, images: ["https://i.pinimg.com/1200x/e5/87/1c/e5871c79df8ea7a1b2eb39848b4621ee.jpg","https://i.pinimg.com/1200x/b2/e2/df/b2e2dfa5253e2258a482b18baaead4c1.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red"], available: true },
   { name: "Stainless Necklace Set", price: 150, images: ["https://magchic.com/cdn/shop/products/P7200466-2.jpg?v=1680068187"], colors: ["Silver"], available: true },
@@ -767,9 +795,9 @@ const products = [
   { name: "The Starry Necklace", price: 150, images: ["https://i.pinimg.com/736x/f6/50/73/f65073f8acb25b867d2b343d5c16eae6.jpg"], colors: ["Gold","Silver"], available: true },
   { name: "The Fish Earrings", price: 90, images: ["https://i.pinimg.com/1200x/be/b8/f0/beb8f01098049adcdb619cc82ace3cda.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
   { name: "The Eyed Stainless Bracelet", price: 90, images: ["https://i.pinimg.com/1200x/4c/88/4a/4c884a9cd120a65dbf1e2af435127ba0.jpg"], colors: ["Multicolored"], available: true },
-  { name: "The Stainless Puzzle", price: 140, images: ["https://i.pinimg.com/1200x/25/fc/1b/25fc1b65dc9c1e6def4589b4536e6814.jpg"], colors: ["Gold"], available: true },
+  { name: "The Eyed Stainless Bracelet", price: 110, images: ["https://i.pinimg.com/1200x/25/fc/1b/25fc1b65dc9c1e6def4589b4536e6814.jpg"], colors: ["Gold"], available: true },
   { name: "A set of two necklace", price: 90, images: ["https://i.pinimg.com/736x/7e/88/82/7e88823affd6e0656acf44833fdd2554.jpg","https://i.pinimg.com/1200x/89/2e/96/892e963a63efd4ceb5471c1302334806.jpg"], colors: ["White","Blue"], available: true },
-  { name: "The Hot summer girl Necklace", price: 120, images: ["https://i.pinimg.com/1200x/0f/33/86/0f3386a3ce453aa9144d38c7e9722008.jpg"], colors: ["Pink"], available: true },
+  { name: "The Hot summer girl Necklace", price: 120, images: ["https://i.pinimg.com/1200x/0f/33/86/0f3386a3ce453aa9144d38c7e9722008.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue","Baby blue"], available: true },
   { name: "The Starfish necklace", price: 80, images: ["https://i.pinimg.com/1200x/45/16/9b/45169bdd8392161754c3ee9d1a09ccf9.jpg"], colors: ["White"], available: true },
   { name: "The Cool set of three Stainless", price: 150, images: ["https://i.pinimg.com/1200x/03/4e/1d/034e1db62dc9e7bd65b59d6e32018f8e.jpg"], colors: ["Multicolored"], available: true },
   { name: "The Basic layered Necklace", price: 80, images: ["https://i.pinimg.com/1200x/7c/f3/26/7cf32685b74657ec307e3ec935d8ed26.jpg"], colors: ["Golden","Silver"], available: true },
@@ -777,29 +805,28 @@ const products = [
   { name: "The Ceramic star Earrings", price: 90, images: ["https://i.pinimg.com/1200x/64/a2/93/64a293fcbe9112cec16edac5e34f825a.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
   { name: "The Nazar Necklace Set", price: 80, images: ["https://i.pinimg.com/736x/44/69/4a/44694a47482b9d699712d977d8f38a39.jpg"], colors: ["Blue"], available: true },
   { name: "Just a girl Necklace", price: 50, images: ["https://i.pinimg.com/1200x/de/a9/0d/dea90d34b3e1d2ed4c6a153d763dc236.jpg"], colors: ["Multicolored"], available: true },
-  { name: "The Short edition", price: 150, images: ["https://i.pinimg.com/1200x/10/68/6c/10686c44dfae097ae8e637d0b8553d31.jpg", "https://i.pinimg.com/1200x/76/dc/d2/76dcd2d791ce0e211c666271110d45bd.jpg"], colors: ["Pink"], available: true },
-  { name: "The Phone Chain", price: 140, images: ["https://i.pinimg.com/1200x/84/e0/6f/84e06f42fa7e1f3a32c93e9dcc06a58e.jpg"], colors: ["White"], available: true },
+  { name: "The Short edition", price: 120, images: ["https://i.pinimg.com/1200x/10/68/6c/10686c44dfae097ae8e637d0b8553d31.jpg", "https://i.pinimg.com/1200x/76/dc/d2/76dcd2d791ce0e211c666271110d45bd.jpg"], colors: ["Pink"], available: true },
+  { name: "The Phone Chain", price: 120, images: ["https://i.pinimg.com/1200x/84/e0/6f/84e06f42fa7e1f3a32c93e9dcc06a58e.jpg"], colors: ["White"], available: true },
   { name: "The Watermelon", price: 50, images: ["https://i.pinimg.com/1200x/5a/91/5a/5a915a934df0098d389ac7fd6947eef2.jpg", "https://i.pinimg.com/1200x/c0/87/93/c08793abf0fcd8d319a637cbfc2c9127.jpg"], colors: ["Red","Pink"], available: true },
-  { name: "Le Téléphone", price: 100, images: ["https://i.pinimg.com/1200x/bd/2b/26/bd2b26b7f47c222b5e43008866808e3a.jpg"], colors: ["White"], available: true },
+  { name: "Le Téléphone", price: 90, images: ["https://i.pinimg.com/1200x/bd/2b/26/bd2b26b7f47c222b5e43008866808e3a.jpg"], colors: ["White"], available: true },
   { name: "The Crystal Clear", price: 110, images: ["https://i.pinimg.com/1200x/29/d0/49/29d0493651107935af22132dcbfc73a5.jpg", "https://i.pinimg.com/736x/fa/ba/12/faba12b64bd8ae301911e93304e3395b.jpg"], colors: ["Gold"], available: true },
   { name: "The Stainless Bracelet", price: 100, images: ["https://i.pinimg.com/736x/97/94/74/9794740d2b09cb7bff842b648e604495.jpg", "https://i.pinimg.com/736x/cd/1e/91/cd1e912a71d67a5781eb1c2fbad46ad4.jpg"], colors: ["Gold"], available: true },
-  { name: "Aventurine Stone Beaded Necklace", price: 130, images: ["https://i.pinimg.com/1200x/5e/9d/21/5e9d21c3a0ccc75d676b679180c2c6e2.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Blue"], available: true },
-  { name: "Polka Dot Clownfish Necklace", price: 120, images: ["https://ricidress.com/cdn/shop/files/ff29445a62fe67b1181b8218994e5fb1_1080x.jpg?v=1743415855"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
+  { name: "Aventurine Stone Beaded Necklace", price: 110, images: ["https://i.pinimg.com/1200x/5e/9d/21/5e9d21c3a0ccc75d676b679180c2c6e2.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Blue"], available: true },
+  { name: "Polka Dot Clownfish Necklace", price: 110, images: ["https://ricidress.com/cdn/shop/files/ff29445a62fe67b1181b8218994e5fb1_1080x.jpg?v=1743415855"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
   { name: "Dainty Pink Set", price: 110, images: ["https://i.pinimg.com/736x/4a/40/71/4a4071b3089baf5fbd1a29f5fbdafff3.jpg"], colors: ["Pink"], available: true },
   { name: "Glowy Bean Necklace", price: 80, images: ["https://i.pinimg.com/1200x/a7/a3/11/a7a3119e0e34ceaf07124b5b35cebd76.jpg","https://i.pinimg.com/736x/c9/cd/9a/c9cd9ab8340c52485798cf68c80f9628.jpg"], colors: ["Red"], available: true },
   { name: "Cherry necklace", price: 60, images: ["https://i.pinimg.com/736x/a8/d7/ae/a8d7ae17490a6a7e09b2ce39e43c36d5.jpg","https://i.pinimg.com/1200x/9c/62/3f/9c623f41ff207b1734eaf507e5037f48.jpg"], colors: ["Red"], available: true },
   { name: "Freshwater pearl Necklace", price: 120, images: ["https://i.pinimg.com/1200x/43/98/bc/4398bc77f3026e91675a22a4d6d5d81c.jpg"], colors: ["Multicolored"], available: true },
   { name: "Night's out Necklace", price: 200, images: ["https://i.pinimg.com/736x/15/83/b3/1583b33041137b331062a9b7e9e3a7cb.jpg","https://i.pinimg.com/1200x/ea/51/af/ea51af2d3e8132bcdd174a1556562f37.jpg"], colors: ["Gold"], available: true },
-  { name: "The Unique", price: 130, images: ["https://i.pinimg.com/1200x/92/d5/6e/92d56e013838777cc531b46d7501b7b5.jpg"], colors: ["White"], available: true },
-  { name: "Pérolas Falsas", price: 130, images: ["https://i.pinimg.com/1200x/b3/13/5c/b3135cd9af625c5854a4a5c2098d28c6.jpg"], colors: ["White"], available: true },
-  { name: "The Salty", price: 130, images: ["https://i.pinimg.com/1200x/fb/52/96/fb529669357a45b4adc926292b788545.jpg","https://i.pinimg.com/1200x/90/1d/eb/901deb5fb37740b43f6202654687b505.jpg"], colors: ["White","Blue"], available: true },
+  { name: "The Unique", price: 120, images: ["https://i.pinimg.com/1200x/92/d5/6e/92d56e013838777cc531b46d7501b7b5.jpg"], colors: ["White"], available: true },
+  { name: "Pérolas Falsas", price: 120, images: ["https://i.pinimg.com/1200x/b3/13/5c/b3135cd9af625c5854a4a5c2098d28c6.jpg"], colors: ["White"], available: true },
+  { name: "The Salty", price: 120, images: ["https://i.pinimg.com/1200x/fb/52/96/fb529669357a45b4adc926292b788545.jpg","https://i.pinimg.com/1200x/90/1d/eb/901deb5fb37740b43f6202654687b505.jpg"], colors: ["White","Blue"], available: true },
   { name: "The Modern Stainless", price: 120, images: ["https://i.pinimg.com/1200x/42/e8/69/42e8691e21c841bd0889db78b109a688.jpg"], colors: ["Gold"], available: true },
   { name: "The Non-Chalant", price: 90, images: ["https://i.pinimg.com/1200x/16/58/f6/1658f65b42a5f05cd3c3d9e157025fbc.jpg","https://i.pinimg.com/1200x/f8/df/a4/f8dfa4f4046b3d3353092bb2d5163da5.jpg","https://i.pinimg.com/1200x/fd/0c/df/fd0cdf4677da5336940ae7b11095855f.jpg"], colors: ["Pink","White","Baby blue"], available: true },
-  { name: "The Coral Nrcklace", price: 130, images: ["https://i.pinimg.com/1200x/e8/af/02/e8af023420b9483621ad930678f58671.jpg"], colors: ["Red"], available: true },
+  { name: "The Coral Nrcklace", price: 120, images: ["https://i.pinimg.com/1200x/e8/af/02/e8af023420b9483621ad930678f58671.jpg"], colors: ["Red"], available: true },
   { name: "Addie Pearl Bracelet", price: 120, images: ["https://i.pinimg.com/736x/b2/08/4b/b2084b5f8e1fdd356bf98b5c346fbe78.jpg"], colors: ["Gold"], available: true },
   { name: "The Turtle Earrings", price: 70, images: ["https://i.pinimg.com/1200x/1a/1d/06/1a1d061bc7b8181519aca224a7a7da43.jpg","https://i.pinimg.com/736x/0b/3b/ee/0b3bee2f71dad55430cd2d1ae35a09a0.jpg"], colors: ["Silver","Gold"], available: true },
   { name: "One Bangle", price: 120, images: ["https://i.pinimg.com/736x/fe/e4/62/fee462c401080243a385b62d88d7a3a1.jpg"], colors: ["Brown"], available: true },
-  { name: "The Intersection", price: 130, images: ["https://i.pinimg.com/736x/da/d1/be/dad1be4e7c4455b5f3121fd00ced9c63.jpg","https://i.pinimg.com/736x/97/39/3f/97393fa286562a4bdad1893a3ee6d3b8.jpg"], colors: ["Gold"], available: true },
   { name: "The Neva Bracelet", price: 130, images: ["https://i.pinimg.com/1200x/b1/fa/1b/b1fa1b4078577a3649b8e80bb883c541.jpg"], colors: ["Brown"], available: true },
   { name: "The Africans Bracelet", price: 160, images: ["https://ricidress.com/cdn/shop/files/70d2c7cc9e5695b3e6c99e7ba5b73814_1080x.jpg?v=1783071516","https://ricidress.com/cdn/shop/files/edccd0a2d344bcb7990e723485c26490_1c71b2ad-f7c1-49a4-a866-10a46228cfe7_1080x.jpg?v=1783071516"], colors: ["Silver","Gold"], available: true },
   { name: "Sleek bangles", price: 180, images: ["https://i.pinimg.com/1200x/84/8b/16/848b163c50e3f1b90df5b5bc4fe46cdc.jpg","https://i.pinimg.com/736x/fe/48/a3/fe48a3af06bff53085a8d04a913f88ba.jpg"], colors: ["Brown"], available: true },
@@ -808,23 +835,20 @@ const products = [
   { name: "The Flower", price: 130, images: ["https://i.pinimg.com/1200x/69/53/ba/6953ba89dc6606b3a36e1e11d3b610e2.jpg"], colors: ["Gold"], available: true },
   { name: "The Hoop", price: 120, images: ["https://i.pinimg.com/1200x/75/40/d9/7540d9b427b9f99abab981ede63e1c19.jpg"], colors: ["Gold"], available: true },
   { name: "The Waterfall Earrings", price: 120, images: ["https://i.pinimg.com/736x/87/54/ae/8754ae83b359e8e649d22316f94dbe61.jpg","https://i.pinimg.com/1200x/e3/c5/c2/e3c5c2467ad88eba327c4876334e6593.jpg"], colors: ["Gold"], available: true },
-  { name: "The Stainless Ring", price: 90, images: ["https://i.pinimg.com/1200x/45/b5/87/45b587a3678c4af0cf166eaa0c6a6d81.jpg","https://i.pinimg.com/736x/40/c6/dd/40c6dd227087b5b3dd3422441000c6ae.jpg"], colors: ["Gold"], available: true },
   { name: "The Stone Bracelet", price: 90, images: ["https://i.pinimg.com/736x/4a/0b/35/4a0b35dcb8b58395f7f0083687022857.jpg","https://i.pinimg.com/736x/51/4e/1d/514e1d262c9df65a96223132cce9231b.jpg"], colors: ["Pink","Green"], available: true },
   { name: "The Blooming Necklace", price: 450, images: ["https://i.pinimg.com/1200x/70/25/b7/7025b7ca0dfda0d9404ad022d5520db1.jpg","https://i.pinimg.com/1200x/d5/ac/b0/d5acb090b785e088e427421c3829e0c3.jpg"], colors: ["Red"], available: true },
   { name: "Simplicity", price: 450, images: ["https://i.pinimg.com/1200x/be/22/82/be2282bdb1b23430e74c83e86a5310c1.jpg","https://i.pinimg.com/1200x/63/a8/63/63a86391fc5e1d0202dc44091973553c.jpg"], colors: ["Purple"], available: true },
   { name: "Pearl dangle earrings", price: 90, images: ["https://i.pinimg.com/1200x/67/87/08/6787080bbd8636499119d01020ca247f.jpg"], colors: ["White"], available: true },
   { name: "The Fire Necklace", price: 150, images: ["https://i.pinimg.com/1200x/de/7e/7b/de7e7b7a221735bdbcecced2eda3ca8e.jpg","https://i.pinimg.com/1200x/e0/09/1f/e0091f95fe17c6f08b8c06f76785f692.jpg"], colors: ["Red","Baby blue","Purple"], available: true },
   { name: "The Initial", price: 130, images: ["https://i.pinimg.com/1200x/3c/6f/72/3c6f72ff5b64434a82530d0b3d103b09.jpg"], colors: ["Multicolored"], available: true },
-  { name: "Vintage freshwater Earrings", price: 90, images: ["https://i.pinimg.com/1200x/63/7d/d4/637dd4fbbc141fd1eabbbd061bdf9e9b.jpg"], colors: ["White"], available: true },
-  { name: "The Peace Earrings", price: 100, images: ["https://i.pinimg.com/1200x/30/71/e4/3071e4712aa3be4027e8e99c3a46c2e9.jpg"], colors: ["Multicolored"], available: true },
-  { name: "Delilah Earrings", price: 130, images: ["https://i.pinimg.com/1200x/6b/f9/c0/6bf9c01198c8f1a3713b686acf965d3e.jpg","https://i.pinimg.com/736x/6d/d4/08/6dd4084747df5eb935fb382f55e9dd09.jpg","https://i.pinimg.com/1200x/4a/ef/a6/4aefa6916d92cfca0eb9a5489eaa6a6d.jpg"], colors: ["Pink","Blue","Green"], available: true },
+  { name: "Vintage freshwater Earrings", price: 90, images: ["https://i.pinimg.com/1200x/63/7d/d4/637dd4fbbc141fd1eabbbd061bdf9e9b.jpg"], colors: ["White"], available: true }
 ];
 
 const WHATSAPP_NUMBER = "201270587767"; // 01270587767 in international format (20 = Egypt code, leading 0 dropped)
 const INSTAPAY_HANDLE = "carolesarwat@instapay";
 
-const SHIPPING_FEE = 30;               // flat shipping fee in EGP
-const FREE_SHIPPING_THRESHOLD = 250;   // orders at or above this subtotal get free shipping
+const SHIPPING_FEE = 40;               // flat shipping fee in EGP
+const FREE_SHIPPING_THRESHOLD = 300;   // orders at or above this subtotal get free shipping
 
 /* ---- 4) STOREWIDE DISCOUNT (the running bar at the top + automatic cart discount) ----
    PROMO_THRESHOLD  : minimum subtotal (before shipping) to unlock the discount
@@ -914,6 +938,11 @@ if (packages.length === 0){
     `;
     offersGrid.appendChild(card);
   });
+}
+
+// Show an eye-catching pulsing "%" badge on the Offers button when packages are available
+if (packages.length > 0){
+  document.getElementById('offersBtn').insertAdjacentHTML('beforeend', `<span class="offers-badge">%</span>`);
 }
 
 function addOfferToCart(pi){
@@ -1193,6 +1222,16 @@ function closeCart(){
   document.getElementById('drawer').classList.remove('active');
   document.getElementById('overlay').classList.remove('active');
 }
+
+function openOffers(){
+  document.getElementById('offersDrawer').classList.add('active');
+  document.getElementById('offersOverlay').classList.add('active');
+}
+function closeOffers(){
+  document.getElementById('offersDrawer').classList.remove('active');
+  document.getElementById('offersOverlay').classList.remove('active');
+}
+
 
 function showCartStep(){
   document.getElementById('drawerTitle').textContent = 'Your Cart';
