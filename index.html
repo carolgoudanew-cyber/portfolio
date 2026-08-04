@@ -33,8 +33,31 @@ body{
 img{ max-width:100%; display:block; }
 a{ color:inherit; }
 
+/* ---------- Top promo marquee ---------- */
+.promo-marquee{
+  position:sticky; top:0; z-index:41;
+  height:32px; overflow:hidden;
+  background:var(--brown-dark);
+  display:flex; align-items:center;
+}
+.marquee-track{
+  display:flex; align-items:center;
+  white-space:nowrap;
+  animation: marquee-scroll 18s linear infinite;
+}
+.marquee-track span{
+  display:inline-flex; align-items:center; gap:8px;
+  color:var(--cream);
+  font-size:11px; font-weight:600; letter-spacing:.6px;
+  padding:0 28px;
+}
+@keyframes marquee-scroll{
+  from{ transform:translateX(0); }
+  to{ transform:translateX(-50%); }
+}
+
 header{
-  position:sticky; top:0; z-index:40;
+  position:sticky; top:32px; z-index:40;
   background:var(--white);
   border-bottom:1px solid var(--line);
 }
@@ -135,6 +158,67 @@ header{
 }
 .section-title p{ color:var(--brown-mid); font-size:12px; margin-top:6px; }
 
+/* ---------- Special Offers section ---------- */
+.offers-title h2{ color:#8B3A3A; }
+.offers-grid{
+  max-width:1180px; margin:0 auto;
+  padding:0 14px 10px;
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+  gap:16px;
+}
+.offer-card{
+  background:linear-gradient(160deg, #FFF8EF 0%, var(--white) 60%);
+  border:1.5px solid #E9C9A6;
+  border-radius:14px;
+  overflow:hidden;
+  display:flex;
+  position:relative;
+}
+.offer-ribbon{
+  position:absolute; top:10px; left:-32px;
+  background:#A5473B; color:var(--cream);
+  font-size:10px; font-weight:700; letter-spacing:.5px;
+  padding:3px 34px; transform:rotate(-45deg);
+  box-shadow:0 2px 6px rgba(0,0,0,.15);
+  z-index:2;
+}
+.offer-img{
+  width:38%; flex-shrink:0; aspect-ratio:1/1;
+  background:var(--cream);
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+}
+.offer-img img{ width:100%; height:100%; object-fit:cover; }
+.offer-body{
+  flex:1; padding:12px 14px; display:flex; flex-direction:column; gap:5px;
+}
+.offer-name{ font-family:var(--font-display); font-size:16px; font-weight:600; line-height:1.2; }
+.offer-desc{ font-size:11px; color:var(--brown-mid); line-height:1.4; }
+.offer-price-row{ display:flex; align-items:baseline; gap:8px; margin-top:2px; flex-wrap:wrap; }
+.offer-old-price{
+  font-size:12.5px; color:#A5473B; text-decoration:line-through; opacity:.75;
+}
+.offer-new-price{ font-size:17px; font-weight:700; color:var(--brown-dark); }
+.offer-save-badge{
+  font-size:9.5px; font-weight:700; letter-spacing:.3px;
+  background:#E7EFE3; color:#4b7c4b;
+  padding:2px 7px; border-radius:20px;
+}
+.offer-add-btn{
+  margin-top:auto;
+  background:#A5473B; color:var(--cream);
+  border:none; padding:8px; border-radius:8px;
+  font-family:var(--font-body); font-size:11.5px; font-weight:600; letter-spacing:.3px;
+  cursor:pointer; transition:.2s ease;
+}
+.offer-add-btn:hover{ background:#8B3A30; }
+.offers-empty{
+  text-align:center; color:var(--brown-mid); font-size:12.5px;
+  padding:20px; max-width:1180px; margin:0 auto;
+}
+
+
 .grid{
   max-width:1180px; margin:0 auto;
   padding:0 14px 50px;
@@ -215,6 +299,29 @@ header{
 .color-dot.selected::after{
   content:''; position:absolute; inset:-3px;
   border:1px solid var(--brown-dark); border-radius:50%;
+}
+
+/* ---------- Selected-color confirmation badge ---------- */
+.selected-color-badge{
+  display:flex; align-items:center; gap:6px;
+  background:var(--cream);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:4px 9px 4px 5px;
+  margin-top:2px;
+  width:fit-content;
+  font-size:10.5px;
+  color:var(--brown-mid);
+}
+.selected-color-badge .swatch-preview{
+  width:15px; height:15px; border-radius:50%;
+  border:1.5px solid var(--white);
+  outline:1px solid var(--line);
+  flex-shrink:0;
+  transition:background .15s ease;
+}
+.selected-color-badge strong{
+  color:var(--brown-dark); font-weight:600;
 }
 
 .qty-row{ display:flex; align-items:center; gap:6px; margin-top:4px; }
@@ -310,6 +417,20 @@ header{
   background:linear-gradient(90deg, var(--tan), var(--brown-dark));
   transition:width .35s ease;
 }
+
+.promo-progress-bar{
+  height:6px; background:var(--line); border-radius:4px; overflow:hidden; margin:10px 0 4px;
+}
+.promo-progress-fill{
+  height:100%; width:0%; border-radius:4px;
+  background:linear-gradient(90deg, #9BBF8A, #4b7c4b);
+  transition:width .35s ease;
+}
+.promo-note{
+  font-size:11px; color:var(--brown-mid); margin:2px 0 8px; text-align:center;
+}
+.promo-note.done{ color:#4b7c4b; font-weight:600; }
+.promo-row{ color:#4b7c4b !important; }
 
 #checkoutForm{ display:none; }
 .checkout-title{
@@ -424,6 +545,9 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
 .lightbox-dots .img-dot.active{ background:#fff; width:16px; }
 
 @media (min-width:641px){
+  .promo-marquee{ height:38px; }
+  header{ top:38px; }
+  .marquee-track span{ font-size:13px; padding:0 34px; }
   .nav-wrap{ padding:18px 28px; }
   .logo{ font-size:32px; }
   .cart-btn{ padding:11px 20px; font-size:14px; }
@@ -453,6 +577,8 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
   .card-status{ font-size:12px; }
   .color-dot{ width:22px; height:22px; }
   .color-label{ font-size:12px; }
+  .selected-color-badge{ font-size:12.5px; padding:5px 12px 5px 6px; }
+  .selected-color-badge .swatch-preview{ width:18px; height:18px; }
   .qty-row button{ width:28px; height:28px; font-size:16px; }
   .qty-row input{ width:36px; font-size:15px; }
   .add-btn{ padding:12px; font-size:14px; }
@@ -486,6 +612,10 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
 </head>
 <body>
 
+<div class="promo-marquee" id="promoMarquee">
+  <div class="marquee-track" id="marqueeTrack"></div>
+</div>
+
 <header>
   <div class="nav-wrap">
     <div class="logo">Elegance<span>.</span></div>
@@ -510,6 +640,13 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
   <p>Handmade accessories, crafted piece by piece. Choose your favorites...</p>
   <div class="divider"></div>
 </section>
+
+<div class="section-title offers-title">
+  <h2>✦ Special Offers ✦</h2>
+  <p>Bundle up and save with our limited-time packages.</p>
+</div>
+
+<div class="offers-grid" id="offersGrid"></div>
 
 <div class="section-title">
   <h2>Our Collection</h2>
@@ -540,7 +677,11 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
       <div class="ship-progress-bar"><div class="ship-progress-fill" id="shipProgressFill"></div></div>
       <div class="ship-note" id="cartShipNote">Free shipping over 250 EGP</div>
 
+      <div class="promo-progress-bar"><div class="promo-progress-fill" id="promoProgressFill"></div></div>
+      <div class="promo-note" id="cartPromoNote">Spend 600 EGP to unlock 10% off!</div>
+
       <div class="total-row"><span>Subtotal</span><span id="cartSubtotal">0 EGP</span></div>
+      <div class="total-row promo-row" id="cartPromoRow" style="display:none;"><span>10% off applied 🎉</span><span id="cartPromoAmount">-0 EGP</span></div>
       <div class="total-row"><span>Shipping</span><span id="cartShipping">0 EGP</span></div>
       <div class="total-row grand"><span>Total</span><span id="cartTotal">0 EGP</span></div>
       <button class="proceed-btn" onclick="goToCheckout()">Proceed to Checkout</button>
@@ -576,6 +717,7 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
       </div>
 
       <div class="checkout-total"><span>Subtotal</span><span id="checkoutSubtotal">0 EGP</span></div>
+      <div class="checkout-total promo-row" id="checkoutPromoRow" style="display:none;"><span>10% off applied 🎉</span><span id="checkoutPromoAmount">-0 EGP</span></div>
       <div class="checkout-total"><span>Shipping</span><span id="checkoutShipping">0 EGP</span></div>
       <div class="checkout-total grand"><span>Total</span><span id="checkoutTotal">0 EGP</span></div>
 
@@ -670,8 +812,8 @@ const products = [
   { name: "Simplicity", price: 450, images: ["https://i.pinimg.com/1200x/be/22/82/be2282bdb1b23430e74c83e86a5310c1.jpg","https://i.pinimg.com/1200x/63/a8/63/63a86391fc5e1d0202dc44091973553c.jpg"], colors: ["Purple"], available: true },
   { name: "Pearl dangle earrings", price: 90, images: ["https://i.pinimg.com/1200x/67/87/08/6787080bbd8636499119d01020ca247f.jpg"], colors: ["White"], available: true },
   { name: "The Fire Necklace", price: 150, images: ["https://i.pinimg.com/1200x/de/7e/7b/de7e7b7a221735bdbcecced2eda3ca8e.jpg","https://i.pinimg.com/1200x/e0/09/1f/e0091f95fe17c6f08b8c06f76785f692.jpg"], colors: ["Red","Baby blue","Purple"], available: true },
-  { name: "The Initial", price: 130, images: ["https://i.pinimg.com/1200x/3c/6f/72/3c6f72ff5b64434a82530d0b3d103b09.jpghttps://i.pinimg.com/1200x/3c/6f/72/3c6f72ff5b64434a82530d0b3d103b09.jpg"], colors: ["Multicolored"], available: true },
-  { name: "Vintage freshwater Earrings", price: 90, images: ["https://i.pinimg.com/1200x/63/7d/d4/637dd4fbbc141fd1eabbbd061bdf9e9b.jpg"], colors: ["White"], available: true },
+  { name: "The Initial", price: 130, images: ["https://i.pinimg.com/1200x/3c/6f/72/3c6f72ff5b64434a82530d0b3d103b09.jpg"], colors: ["Multicolored"], available: true },
+  { name: "Vintage freshwater Earrings", price: 90, images: ["https://i.pinimg.com/1200x/63/7d/d4/637dd4fbbc141fd1eabbbd061bdf9e9b.jpg"], colors: ["White"], available: true }
 ];
 
 const WHATSAPP_NUMBER = "201270587767"; // 01270587767 in international format (20 = Egypt code, leading 0 dropped)
@@ -680,11 +822,104 @@ const INSTAPAY_HANDLE = "carolesarwat@instapay";
 const SHIPPING_FEE = 30;               // flat shipping fee in EGP
 const FREE_SHIPPING_THRESHOLD = 250;   // orders at or above this subtotal get free shipping
 
+/* ---- 4) STOREWIDE DISCOUNT (the running bar at the top + automatic cart discount) ----
+   PROMO_THRESHOLD  : minimum subtotal (before shipping) to unlock the discount
+   PROMO_PERCENT    : discount percentage, written as a decimal (0.10 = 10%)
+   This automatically applies at checkout once a customer's cart reaches the threshold —
+   nothing else to wire up.
+------------------------------------------------------------------------------ */
+const PROMO_THRESHOLD = 600;
+const PROMO_PERCENT = 0.10;
+
+/* ---- 5) SPECIAL OFFERS / PACKAGES -------------------------------------------
+   These show up in their own "Special Offers" section near the top of the site,
+   with the old price shown crossed out and the new discounted price next to it.
+
+   Copy one whole block (from "▓▓▓ PACKAGE" to "▓▓▓ END PACKAGE") to add a new
+   package. Delete one to remove it.
+
+   - name        : package name shown on the site
+   - description : one short line explaining what's included
+   - oldPrice    : the original combined price (shown crossed out), number only
+   - newPrice    : the discounted bundle price (shown large and bold), number only
+   - images      : same as products — one or more picture links in a list.
+                    Leave as [] (empty) to show a placeholder box.
+------------------------------------------------------------------------------ */
+const packages = [
+
+  // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  PACKAGE 1  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  {
+    name: "Necklace + Earrings Duo",                 // ← Package 1's name
+    description: "Any necklace paired with any earrings.", // ← short description
+    oldPrice: 220,                                    // ← original combined price
+    newPrice: 180,                                    // ← discounted bundle price
+    images: []                                        // ← picture link(s), e.g. ["https://..."]
+  },
+  // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  END PACKAGE 1  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+
+  // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  PACKAGE 2  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  {
+    name: "Bracelet Trio",                            // ← Package 2's name
+    description: "Any three bracelets, mixed or matched.", // ← short description
+    oldPrice: 240,                                    // ← original combined price
+    newPrice: 195,                                    // ← discounted bundle price
+    images: []                                        // ← picture link(s)
+  }
+  // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  END PACKAGE 2  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+
+  // 👉 TO ADD A NEW PACKAGE: copy one whole block above (from its
+  //    "▓▓▓ PACKAGE" line to its "▓▓▓ END PACKAGE" line), paste it here
+  //    (before the closing bracket "]" below), give it a number, and edit it.
+];
+
 /* ================================================================================
    END OF EDIT ZONE — code below makes the site work
    ================================================================================ */
 
 document.getElementById('instapayHandleText').textContent = INSTAPAY_HANDLE;
+
+// Populate the scrolling top marquee from the promo constants (duplicated for a seamless loop)
+const promoMsg = `✨ ${Math.round(PROMO_PERCENT*100)}% OFF when you spend ${PROMO_THRESHOLD} EGP or more ✨`;
+document.getElementById('marqueeTrack').innerHTML = `<span>${promoMsg}</span><span>${promoMsg}</span><span>${promoMsg}</span><span>${promoMsg}</span>`;
+
+// ---------- Render Special Offers / packages ----------
+const offersGrid = document.getElementById('offersGrid');
+if (packages.length === 0){
+  offersGrid.outerHTML = '<div class="offers-empty">No special offers right now — check back soon!</div>';
+} else {
+  packages.forEach((pkg, pi) => {
+    const card = document.createElement('div');
+    card.className = 'offer-card';
+    const save = pkg.oldPrice - pkg.newPrice;
+    const imgHTML = (pkg.images && pkg.images[0])
+      ? `<img src="${pkg.images[0]}" alt="${pkg.name}">`
+      : placeholderSVG();
+    card.innerHTML = `
+      <div class="offer-ribbon">DEAL</div>
+      <div class="offer-img">${imgHTML}</div>
+      <div class="offer-body">
+        <div class="offer-name">${pkg.name}</div>
+        <div class="offer-desc">${pkg.description || ''}</div>
+        <div class="offer-price-row">
+          <span class="offer-old-price">${pkg.oldPrice} EGP</span>
+          <span class="offer-new-price">${pkg.newPrice} EGP</span>
+          ${save > 0 ? `<span class="offer-save-badge">SAVE ${save} EGP</span>` : ''}
+        </div>
+        <button class="offer-add-btn" onclick="addOfferToCart(${pi})">Add Package to Cart</button>
+      </div>
+    `;
+    offersGrid.appendChild(card);
+  });
+}
+
+function addOfferToCart(pi){
+  const pkg = packages[pi];
+  const image = (pkg.images && pkg.images[0]) || '';
+  cart.push({ name: pkg.name, price: pkg.newPrice, color: 'Package deal', qty: 1, image });
+  updateCartUI();
+  openCart();
+}
+
 
 const grid = document.getElementById('productGrid');
 let cart = [];
@@ -722,12 +957,20 @@ products.forEach((p, i) => {
     imgHTML = `<div class="img-track" id="track-${i}" data-current="0">${slides}</div>${navHTML}`;
   }
 
-  const colorsHTML = (p.colors || []).map((c, ci) => {
+  const colorsArr = p.colors || [];
+  const colorsHTML = colorsArr.map((c, ci) => {
     const swatch = colorToCSS(c);
     return `<span class="color-dot ${ci===0?'selected':''}" data-color="${c}"
       style="background:${swatch}" title="${c}"
       onclick="selectColor(${i}, '${c}', this)"></span>`;
   }).join('');
+
+  const firstColor = colorsArr[0] || null;
+  const selectedBadgeHTML = firstColor ? `
+    <div class="selected-color-badge" id="selectedBadge-${i}">
+      <span class="swatch-preview" id="selectedSwatch-${i}" style="background:${colorToCSS(firstColor)}"></span>
+      Color: <strong id="selectedName-${i}">${firstColor}</strong>
+    </div>` : '';
 
   card.innerHTML = `
     <div class="card-img">${imgHTML}</div>
@@ -741,6 +984,7 @@ products.forEach((p, i) => {
         <span class="color-label">Color:</span>
         ${colorsHTML}
       </div>
+      ${selectedBadgeHTML}
       <div class="qty-row">
         <button onclick="changeQty(${i}, -1)">−</button>
         <input type="text" id="qty-${i}" value="1" readonly>
@@ -830,11 +1074,17 @@ function changeQty(i, delta){
   el.value = val;
 }
 
+/* Updates the swatch dot selection AND the visible "Color: X" confirmation badge */
 function selectColor(i, color, el){
   const siblings = el.parentElement.querySelectorAll('.color-dot');
   siblings.forEach(s => s.classList.remove('selected'));
   el.classList.add('selected');
   el.parentElement.dataset.chosen = color;
+
+  const nameEl = document.getElementById('selectedName-' + i);
+  const swatchEl = document.getElementById('selectedSwatch-' + i);
+  if (nameEl) nameEl.textContent = color;
+  if (swatchEl) swatchEl.style.background = colorToCSS(color);
 }
 
 function addToCart(i){
@@ -884,7 +1134,8 @@ function updateCartUI(){
 
   const subtotal = cart.reduce((a,c)=> a + c.price*c.qty, 0);
   const shipping = calcShipping(subtotal);
-  const total = subtotal + shipping;
+  const promoDiscount = subtotal >= PROMO_THRESHOLD ? Math.round(subtotal * PROMO_PERCENT) : 0;
+  const total = subtotal - promoDiscount + shipping;
 
   const pct = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
   document.getElementById('shipProgressFill').style.width = pct + '%';
@@ -899,6 +1150,25 @@ function updateCartUI(){
       : `Free shipping over ${FREE_SHIPPING_THRESHOLD} EGP`;
     noteEl.classList.remove('done');
   }
+
+  const promoPct = Math.min(100, (subtotal / PROMO_THRESHOLD) * 100);
+  document.getElementById('promoProgressFill').style.width = promoPct + '%';
+  const promoNoteEl = document.getElementById('cartPromoNote');
+  if (subtotal >= PROMO_THRESHOLD){
+    promoNoteEl.textContent = `10% off unlocked — you saved ${promoDiscount} EGP! 🎉`;
+    promoNoteEl.classList.add('done');
+  } else {
+    const promoRemaining = PROMO_THRESHOLD - subtotal;
+    promoNoteEl.textContent = subtotal > 0
+      ? `Spend ${promoRemaining} EGP more to unlock 10% off!`
+      : `Spend ${PROMO_THRESHOLD} EGP to unlock 10% off!`;
+    promoNoteEl.classList.remove('done');
+  }
+
+  document.getElementById('cartPromoRow').style.display = promoDiscount > 0 ? 'flex' : 'none';
+  document.getElementById('cartPromoAmount').textContent = '-' + promoDiscount + ' EGP';
+  document.getElementById('checkoutPromoRow').style.display = promoDiscount > 0 ? 'flex' : 'none';
+  document.getElementById('checkoutPromoAmount').textContent = '-' + promoDiscount + ' EGP';
 
   document.getElementById('cartSubtotal').textContent = subtotal + ' EGP';
   document.getElementById('cartShipping').textContent = shipping === 0 ? 'FREE' : shipping + ' EGP';
@@ -979,7 +1249,8 @@ function placeOrder(){
 
   const subtotal = cart.reduce((a,c)=> a + c.price*c.qty, 0);
   const shipping = calcShipping(subtotal);
-  const total = subtotal + shipping;
+  const promoDiscount = subtotal >= PROMO_THRESHOLD ? Math.round(subtotal * PROMO_PERCENT) : 0;
+  const total = subtotal - promoDiscount + shipping;
 
   let msg = `New Order — Elegance\n\n`;
   msg += `Name: ${name}\nPhone: ${phone}\nAddress: ${address}\n`;
@@ -989,6 +1260,9 @@ function placeOrder(){
     msg += `- ${item.name} (${item.color}) x${item.qty} = ${item.price*item.qty} EGP\n`;
   });
   msg += `\nSubtotal: ${subtotal} EGP`;
+  if (promoDiscount > 0){
+    msg += `\n10% off discount: -${promoDiscount} EGP`;
+  }
   msg += `\nShipping: ${shipping === 0 ? 'FREE' : shipping + ' EGP'}`;
   msg += `\nTotal: ${total} EGP`;
 
@@ -1077,7 +1351,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   img.addEventListener('click', (e) => {
     e.stopPropagation();
-    if (didDrag){ didDrag = false; return; } // don't toggle zoom right after a drag
+    if (didDrag){ didDrag = false; return; }
     if (lb.zoom === 1){
       lb.zoom = 2.4;
     } else {
@@ -1086,7 +1360,6 @@ document.addEventListener('DOMContentLoaded', () => {
     applyLightboxTransform();
   });
 
-  // Mouse drag panning (desktop)
   img.addEventListener('mousedown', (e) => {
     if (lb.zoom === 1) return;
     isDragging = true; didDrag = false;
@@ -1106,7 +1379,6 @@ document.addEventListener('DOMContentLoaded', () => {
     img.classList.remove('dragging');
   });
 
-  // Touch: single-finger pan (when zoomed) + two-finger pinch-to-zoom
   let pinchStartDist = 0, pinchStartZoom = 1;
   let touchStartX = 0, touchStartY = 0, touchPanStartX = 0, touchPanStartY = 0;
 
