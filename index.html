@@ -831,7 +831,7 @@ const products = [
   { name: "The Africans Bracelet", price: 160, images: ["https://ricidress.com/cdn/shop/files/70d2c7cc9e5695b3e6c99e7ba5b73814_1080x.jpg?v=1783071516","https://ricidress.com/cdn/shop/files/edccd0a2d344bcb7990e723485c26490_1c71b2ad-f7c1-49a4-a866-10a46228cfe7_1080x.jpg?v=1783071516"], colors: ["Silver","Gold"], available: true },
   { name: "Sleek bangles", price: 180, images: ["https://i.pinimg.com/1200x/84/8b/16/848b163c50e3f1b90df5b5bc4fe46cdc.jpg","https://i.pinimg.com/736x/fe/48/a3/fe48a3af06bff53085a8d04a913f88ba.jpg"], colors: ["Brown"], available: true },
   { name: "The Transperancy", price: 130, images: ["https://i.pinimg.com/736x/97/39/3f/97393fa286562a4bdad1893a3ee6d3b8.jpg","https://www.pinterest.com/pin/937382109961544967/"], colors: ["Gold"], available: true },
-  { name: "Acrylic Bangle", price: 120, images: ["https://i.pinimg.com/736x/1e/e8/3a/1ee83a24e30f88ee12e11979b9550568.jpg"], colors: ["Brown"], available: true },
+  { name: "Acrylic Bangle", price: 120, images: ["https://i.pinimg.com/736x/da/d1/be/dad1be4e7c4455b5f3121fd00ced9c63.jpg","https://i.pinimg.com/736x/1e/e8/3a/1ee83a24e30f88ee12e11979b9550568.jpg"], colors: ["Brown"], available: true },
   { name: "The Ring", price: 90, images: ["https://i.pinimg.com/736x/40/c6/dd/40c6dd227087b5b3dd3422441000c6ae.jpg","https://i.pinimg.com/1200x/45/b5/87/45b587a3678c4af0cf166eaa0c6a6d81.jpg"], colors: ["Gold"], available: true },
   { name: "The Eddie Earrings", price: 120, images: ["https://i.pinimg.com/1200x/76/a9/7b/76a97b48227269e8a3f01452d33838a9.jpg"], colors: ["Gold"], available: true },
   { name: "The Flower", price: 130, images: ["https://i.pinimg.com/1200x/69/53/ba/6953ba89dc6606b3a36e1e11d3b610e2.jpg"], colors: ["Gold"], available: true },
@@ -880,42 +880,31 @@ const PROMO_PERCENT = 0.10;
    - images      : same as products — one or more picture links in a list.
                     Leave as [] (empty) to show a placeholder box.
 ------------------------------------------------------------------------------ */
-const offers = [
-{
-  name: "Ocean Flame Set",
-  image: "MERGE(Pearl dangle earrings + Fire Necklace)",
-  oldPrice: 240,
-  newPrice: 199,
-  save: "SAVE 12%"
-},
-{
-  name: "Tropical Escape Set",
-  image: "MERGE(The Turtle Earrings + The Salty)",
-  oldPrice: 200,
-  newPrice: 169,
-  save: "SAVE 12%"
-},
-{
-  name: "Golden Protection Set",
-  image: "MERGE(The Ring + The Eyed Stainless Bracelet)",
-  oldPrice: 180,
-  newPrice: 149,
-  save: "SAVE 12%"
-},
-{
-  name: "Starry Shore Set",
-  image: "MERGE(The Ceramic star Earrings + The Starfish Necklace)",
-  oldPrice: 170,
-  newPrice: 139,
-  save: "SAVE 12%"
-},
-{
-  name: "Personalized Sea Charm Set",
-  image: "MERGE(Key Chain with name + The Star Necklace)",
-  oldPrice: 170,
-  newPrice: 145,
-  save: "SAVE 12%"
-}
+const packages = [
+
+  // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  PACKAGE 1  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  {
+    name: "Necklace + Earrings Duo",                 // ← Package 1's name
+    description: "Any necklace paired with any earrings.", // ← short description
+    oldPrice: 220,                                    // ← original combined price
+    newPrice: 180,                                    // ← discounted bundle price
+    images: []                                        // ← picture link(s), e.g. ["https://..."]
+  },
+  // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  END PACKAGE 1  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+
+  // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  PACKAGE 2  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  {
+    name: "Bracelet Trio",                            // ← Package 2's name
+    description: "Any three bracelets, mixed or matched.", // ← short description
+    oldPrice: 240,                                    // ← original combined price
+    newPrice: 195,                                    // ← discounted bundle price
+    images: []                                        // ← picture link(s)
+  }
+  // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  END PACKAGE 2  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+
+  // 👉 TO ADD A NEW PACKAGE: copy one whole block above (from its
+  //    "▓▓▓ PACKAGE" line to its "▓▓▓ END PACKAGE" line), paste it here
+  //    (before the closing bracket "]" below), give it a number, and edit it.
 ];
 
 /* ================================================================================
