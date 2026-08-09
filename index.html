@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Elegance — Handmade Accessories</title>
+<title>Elegancia — Handmade Accessories</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -636,7 +636,7 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
 
 <header>
   <div class="nav-wrap">
-    <div class="logo">Elegance<span>.</span></div>
+    <div class="logo">Elegancia<span>.</span></div>
     <div class="nav-right">
       <div class="custom-wrap">
         <div class="custom-bubble" id="customBubble" onclick="openCustomChat()">
@@ -657,7 +657,7 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
 
 <section class="hero">
   <span class="eyebrow">Handmade with love</span>
-  <h1>Elegance</h1>
+  <h1>Elegancia</h1>
   <p>Handmade accessories, crafted piece by piece. Choose your favorites...</p>
   <div class="divider"></div>
 </section>
@@ -670,7 +670,7 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
 <div class="grid" id="productGrid"></div>
 
 <footer>
-  <span class="fname">Elegance</span>
+  <span class="fname">Elegancia</span>
   Handmade accessories · We deliver quality and elegance.
 </footer>
 
@@ -703,7 +703,7 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
   <div class="drawer-foot">
     <div id="cartSummary">
       <div class="ship-progress-bar"><div class="ship-progress-fill" id="shipProgressFill"></div></div>
-      <div class="ship-note" id="cartShipNote">Free shipping over 300 EGP</div>
+      <div class="ship-note" id="cartShipNote">Free shipping over 350 EGP</div>
 
       <div class="promo-progress-bar"><div class="promo-progress-fill" id="promoProgressFill"></div></div>
       <div class="promo-note" id="cartPromoNote">Spend 600 EGP to unlock 10% off!</div>
@@ -729,7 +729,11 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
       </div>
       <div class="field">
         <label>Delivery Address <span class="req">*</span></label>
-        <textarea id="custAddress" required placeholder="City, street, building, landmark..."></textarea>
+        <textarea id="custAddress" required placeholder="City, street, building..."></textarea>
+      </div>
+      <div class="field">
+        <label>Landmark <span class="req">*</span></label>
+        <textarea id="custLandmark" required placeholder="A Known street, shop, building..."></textarea>
       </div>
 
       <label class="pay-label">Payment Method <span class="req">*</span></label>
@@ -741,7 +745,7 @@ footer .fname{ font-family:var(--font-display); font-size:18px; color:var(--brow
 
       <div class="instapay-box" id="instapayBox">
         Send payment to InstaPay: <strong id="instapayHandleText">your-instapay-username</strong><br>
-        Then send the payment screenshot with your order.
+        Then send the payment screenshot.
       </div>
 
       <div class="checkout-total"><span>Subtotal</span><span id="checkoutSubtotal">0 EGP</span></div>
@@ -799,7 +803,7 @@ const products = [
   { name: "The Hot summer girl Necklace", price: 160, images: ["https://i.pinimg.com/1200x/0f/33/86/0f3386a3ce453aa9144d38c7e9722008.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue","Baby blue"], available: true },
   { name: "The Starfish necklace", price: 90, images: ["https://i.pinimg.com/1200x/45/16/9b/45169bdd8392161754c3ee9d1a09ccf9.jpg"], colors: ["White"], available: true },
   { name: "The Basic layered Necklace", price: 150, images: ["https://i.pinimg.com/1200x/7c/f3/26/7cf32685b74657ec307e3ec935d8ed26.jpg"], colors: ["Golden","Silver"], available: true },
-  { name: "The Sparkle Stainless Earrings", price: 80, images: ["https://i.pinimg.com/1200x/4c/31/04/4c31048bde5c8373215c3f507d9699a7.jpg","https://i.pinimg.com/1200x/49/aa/c1/49aac1c6a37c6a752b8bf4fdf418debd.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
+  { name: "The Sparkle Stainless Earrings", price: 100, images: ["https://i.pinimg.com/1200x/4c/31/04/4c31048bde5c8373215c3f507d9699a7.jpg","https://i.pinimg.com/1200x/49/aa/c1/49aac1c6a37c6a752b8bf4fdf418debd.jpg"], colors: ["Brown","Yellow","Purple","Green","White","Red","Blue"], available: true },
   { name: "The Nazar Necklace Set", price: 80, images: ["https://i.pinimg.com/736x/44/69/4a/44694a47482b9d699712d977d8f38a39.jpg"], colors: ["Blue"], available: true },
   { name: "Just a girl Necklace", price: 50, images: ["https://i.pinimg.com/1200x/de/a9/0d/dea90d34b3e1d2ed4c6a153d763dc236.jpg"], colors: ["Multicolored"], available: true },
   { name: "The Short edition Phone Chain", price: 160, images: ["https://i.pinimg.com/1200x/fe/61/24/fe612428acc429411b3c121854cb100e.jpg"], colors: ["Pink","Blue","Multicolored"], available: true },
@@ -807,7 +811,7 @@ const products = [
   { name: "The Watermelon", price: 50, images: ["https://i.pinimg.com/1200x/5a/91/5a/5a915a934df0098d389ac7fd6947eef2.jpg", "https://i.pinimg.com/1200x/c0/87/93/c08793abf0fcd8d319a637cbfc2c9127.jpg"], colors: ["Red","Pink"], available: true },
   { name: "Le Téléphone", price: 100, images: ["https://i.pinimg.com/1200x/bd/2b/26/bd2b26b7f47c222b5e43008866808e3a.jpg"], colors: ["White"], available: true },
   { name: "The Crystal Clear", price: 120, images: ["https://i.pinimg.com/1200x/29/d0/49/29d0493651107935af22132dcbfc73a5.jpg", "https://i.pinimg.com/736x/fa/ba/12/faba12b64bd8ae301911e93304e3395b.jpg"], colors: ["Gold"], available: true },
-  { name: "The Stainless Bracelet", price: 100, images: ["https://i.pinimg.com/736x/97/94/74/9794740d2b09cb7bff842b648e604495.jpg", "https://i.pinimg.com/736x/cd/1e/91/cd1e912a71d67a5781eb1c2fbad46ad4.jpg"], colors: ["Gold"], available: true },
+  { name: "The Stainless Bracelet", price: 120, images: ["https://i.pinimg.com/736x/97/94/74/9794740d2b09cb7bff842b648e604495.jpg", "https://i.pinimg.com/736x/cd/1e/91/cd1e912a71d67a5781eb1c2fbad46ad4.jpg"], colors: ["Gold"], available: true },
   { name: "Aventurine Stone Beaded Necklace", price: 150, images: ["https://i.pinimg.com/736x/17/ab/fe/17abfe4744aa9861349d2331a02e6135.jpg"], colors: ["Green"], available: true },
   { name: "Dainty Pink Set", price: 110, images: ["https://i.pinimg.com/736x/4a/40/71/4a4071b3089baf5fbd1a29f5fbdafff3.jpg"], colors: ["Pink"], available: true },
   { name: "The South", price: 170, images: ["https://i.pinimg.com/1200x/03/00/07/030007180b56a24212d4431002f5c471.jpg"], colors: ["Red"], available: true },
@@ -816,14 +820,14 @@ const products = [
   { name: "Cherry necklace", price: 60, images: ["https://i.pinimg.com/736x/a8/d7/ae/a8d7ae17490a6a7e09b2ce39e43c36d5.jpg","https://i.pinimg.com/1200x/9c/62/3f/9c623f41ff207b1734eaf507e5037f48.jpg"], colors: ["Red"], available: true },
   { name: "Night's out Necklace", price: 400, images: ["https://i.pinimg.com/736x/15/83/b3/1583b33041137b331062a9b7e9e3a7cb.jpg","https://i.pinimg.com/1200x/ea/51/af/ea51af2d3e8132bcdd174a1556562f37.jpg"], colors: ["Gold"], available: true },
   { name: "Le Foux", price: 180, images: ["https://i.pinimg.com/1200x/7f/a6/8c/7fa68cb76168c72b606a79f0a94024cf.jpg","https://i.pinimg.com/736x/81/4f/2b/814f2bfd20c5971038043936722b2844.jpg"], colors: ["White"], available: true },
-  { name: "The Unique", price: 120, images: ["https://i.pinimg.com/1200x/92/d5/6e/92d56e013838777cc531b46d7501b7b5.jpg"], colors: ["White"], available: true },
+  { name: "The Unique", price: 130, images: ["https://i.pinimg.com/1200x/92/d5/6e/92d56e013838777cc531b46d7501b7b5.jpg"], colors: ["White"], available: true },
   { name: "Pérolas Falsas", price: 130, images: ["https://i.pinimg.com/1200x/b3/13/5c/b3135cd9af625c5854a4a5c2098d28c6.jpg"], colors: ["White"], available: true },
   { name: "The Jelewery Necklace", price: 190, images: ["https://i.pinimg.com/736x/2a/1c/42/2a1c42e789778131739db4fe729f5131.jpg"], colors: ["White"], available: true },
   { name: "The Blossom Necklace", price: 150, images: ["https://i.pinimg.com/1200x/69/bc/36/69bc36b3bb8c9a8a30a010c4587d4d09.jpg"], colors: ["White"], available: true },
   { name: "The Salty", price: 130, images: ["https://i.pinimg.com/1200x/fb/52/96/fb529669357a45b4adc926292b788545.jpg","https://i.pinimg.com/1200x/90/1d/eb/901deb5fb37740b43f6202654687b505.jpg"], colors: ["White","Blue"], available: true },
   { name: "The Modern Stainless", price: 120, images: ["https://i.pinimg.com/1200x/42/e8/69/42e8691e21c841bd0889db78b109a688.jpg"], colors: ["Gold"], available: true },
-  { name: "The Non-Chalant", price: 90, images: ["https://i.pinimg.com/1200x/16/58/f6/1658f65b42a5f05cd3c3d9e157025fbc.jpg","https://i.pinimg.com/1200x/f8/df/a4/f8dfa4f4046b3d3353092bb2d5163da5.jpg","https://i.pinimg.com/1200x/fd/0c/df/fd0cdf4677da5336940ae7b11095855f.jpg"], colors: ["Pink","White","Baby blue"], available: true },
-  { name: "The Coral Necklace", price: 150, images: ["https://i.pinimg.com/1200x/e8/af/02/e8af023420b9483621ad930678f58671.jpg"], colors: ["Red"], available: true },
+  { name: "The Non-Chalant", price: 100, images: ["https://i.pinimg.com/1200x/16/58/f6/1658f65b42a5f05cd3c3d9e157025fbc.jpg","https://i.pinimg.com/1200x/f8/df/a4/f8dfa4f4046b3d3353092bb2d5163da5.jpg","https://i.pinimg.com/1200x/fd/0c/df/fd0cdf4677da5336940ae7b11095855f.jpg"], colors: ["Pink","White","Baby blue"], available: true },
+  { name: "The Coral Necklace", price: 170, images: ["https://i.pinimg.com/1200x/e8/af/02/e8af023420b9483621ad930678f58671.jpg"], colors: ["Red"], available: true },
   { name: "The Havana Necklace", price: 200, images: ["https://magchic.com/cdn/shop/products/HavanaNecklace.jpg?v=1680067721"], colors: ["Gold"], available: true },
   { name: "Addie Pearl Bracelet", price: 180, images: ["https://i.pinimg.com/736x/b2/08/4b/b2084b5f8e1fdd356bf98b5c346fbe78.jpg"], colors: ["Gold"], available: true },
   { name: "Le Trottoir", price: 180, images: ["https://i.pinimg.com/736x/f4/54/3a/f4543a1f6922b50afc6c1328995d18ac.jpg"], colors: ["White"], available: true },
@@ -883,7 +887,7 @@ const WHATSAPP_NUMBER = "201270587767"; // 01270587767 in international format (
 const INSTAPAY_HANDLE = "carolesarwat@instapay";
 
 const SHIPPING_FEE = 40;               // flat shipping fee in EGP
-const FREE_SHIPPING_THRESHOLD = 300;   // orders at or above this subtotal get free shipping
+const FREE_SHIPPING_THRESHOLD = 350;   // orders at or above this subtotal get free shipping
 
 /* ---- 4) STOREWIDE DISCOUNT (the running bar at the top + automatic cart discount) ----
    PROMO_THRESHOLD  : minimum subtotal (before shipping) to unlock the discount
@@ -931,8 +935,8 @@ const packages = [
    {
     name: "The Elegance", 
     description:" The Coral Necklace + The Stainless Bracelet",// ← Package 1's name
-    oldPrice: 250,                                    // ← original combined price
-    newPrice: 200,                                    // ← discounted bundle price
+    oldPrice: 290,                                    // ← original combined price
+    newPrice: 230,                                    // ← discounted bundle price
     images: ["https://i.pinimg.com/736x/97/94/74/9794740d2b09cb7bff842b648e604495.jpg"],                                       // ← picture link(s), e.g. ["https://..."]
   },
     {
